@@ -147,6 +147,10 @@ try {
 
       {/* Turnstile */}
       <div ref={containerRef} />
+      <p className="text-xs text-neutral-500">
+  Debug: status={status} token={token ? "yes" : "no"}
+</p>
+
 
       <button
         type="submit"
