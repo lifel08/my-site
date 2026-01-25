@@ -145,11 +145,11 @@ export default function WebAnalyticsPage() {
           free to reach out. I am happy to discuss your situation and see whether we are a good fit.
         </p>
 
-        {/* Placeholder: replace with your actual form component */}
-<ContactForm
-  messagePlaceholder="Briefly describe your context or question"
-  defaultSubject="Web Analytics Consulting"
-/>
+        {/* ContactForm*/}
+        <ContactForm
+          messagePlaceholder="Briefly describe your context or question"
+          defaultSubject="Web Analytics Consulting"
+        />
       </section>
     </div>
   );

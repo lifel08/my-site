@@ -67,6 +67,7 @@ export default function ContactForm({
   }, [siteKey]);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    console.log("ContactForm onSubmit fired");
     e.preventDefault();
     setStatus("sending");
 

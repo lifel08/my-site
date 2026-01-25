@@ -142,10 +142,11 @@ export default function SEOConsultingPage() {
           If you are looking for strategic SEO support, team training or an external perspective on
           your current setup, I am happy to discuss your situation.
         </p>
-<ContactForm
-  messagePlaceholder="Briefly describe your context or question"
-  defaultSubject="SEO Consulting"
-/>
+         {/* ContactForm*/}
+        <ContactForm
+          messagePlaceholder="Briefly describe your context or question"
+          defaultSubject="SEO Consulting"
+        />
       </section>
     </div>
   );
