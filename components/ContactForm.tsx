@@ -81,27 +81,40 @@ export default function ContactForm({
       subject: defaultSubject ?? "",
     };
 
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) throw new Error();
+try {
+  const res = await fetch("/api/contact", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(payload),
+  });
 
-      setStatus("success");
-      e.currentTarget.reset();
-      setToken("");
+  if (!res.ok) throw new Error("Request failed");
+  console.log("Contact API OK");
 
-      if (window.turnstile && widgetIdRef.current) {
-        window.turnstile.reset(widgetIdRef.current);
-      }
-    } catch {
-      setStatus("error");
-      if (window.turnstile && widgetIdRef.current) {
-        window.turnstile.reset(widgetIdRef.current);
-      }
+  // ✅ success state first
+  setStatus("success");
+  e.currentTarget.reset();
+  setToken("");
+
+  // ✅ Turnstile reset must NEVER break success
+  try {
+    if (window.turnstile && widgetIdRef.current) {
+      window.turnstile.reset(widgetIdRef.current);
     }
+  } catch {
+    // ignore
+  }
+} catch {
+  setStatus("error");
+  try {
+    if (window.turnstile && widgetIdRef.current) {
+      window.turnstile.reset(widgetIdRef.current);
+    }
+  } catch {
+    // ignore
+  }
+}
+
   }
 
   return (
