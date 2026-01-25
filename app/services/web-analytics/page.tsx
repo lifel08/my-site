@@ -1,3 +1,5 @@
+import ContactForm from "@/components/ContactForm";
+
 export default function WebAnalyticsPage() {
   return (
     <div className="space-y-16">
@@ -144,29 +146,10 @@ export default function WebAnalyticsPage() {
         </p>
 
         {/* Placeholder: replace with your actual form component */}
-        <form className="space-y-4">
-          <input
-            type="text"
-            placeholder="Your name"
-            className="w-full rounded-xl border border-neutral-300 px-4 py-3 text-sm"
-          />
-          <input
-            type="email"
-            placeholder="Your email"
-            className="w-full rounded-xl border border-neutral-300 px-4 py-3 text-sm"
-          />
-          <textarea
-            placeholder="Briefly describe your project or question"
-            rows={4}
-            className="w-full rounded-xl border border-neutral-300 px-4 py-3 text-sm"
-          />
-          <button
-            type="submit"
-            className="inline-flex rounded-xl bg-[#ff6400] px-5 py-3 text-sm font-semibold text-white hover:opacity-90"
-          >
-            Send message
-          </button>
-        </form>
+<ContactForm
+  messagePlaceholder="Briefly describe your context or question"
+  defaultSubject="Web Analytics Consulting"
+/>
       </section>
     </div>
   );

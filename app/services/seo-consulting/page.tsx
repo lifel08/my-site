@@ -1,3 +1,5 @@
+import ContactForm from "@/components/ContactForm";
+
 export default function SEOConsultingPage() {
   return (
     <div className="space-y-16">
@@ -83,7 +85,7 @@ export default function SEOConsultingPage() {
           </li>
           <li>
             Supported SEO considerations during website relaunches and migrations through reviews,
-            guidance and validation.
+            guidance and validation
           </li>
           <li>
             Built SEO reporting and dashboards by integrating data from Search Console, analytics and
@@ -140,30 +142,10 @@ export default function SEOConsultingPage() {
           If you are looking for strategic SEO support, team training or an external perspective on
           your current setup, I am happy to discuss your situation.
         </p>
-
-        <form className="space-y-4">
-          <input
-            type="text"
-            placeholder="Your name"
-            className="w-full rounded-xl border border-neutral-300 px-4 py-3 text-sm"
-          />
-          <input
-            type="email"
-            placeholder="Your email"
-            className="w-full rounded-xl border border-neutral-300 px-4 py-3 text-sm"
-          />
-          <textarea
-            rows={4}
-            placeholder="Briefly describe your context or question"
-            className="w-full rounded-xl border border-neutral-300 px-4 py-3 text-sm"
-          />
-          <button
-            type="submit"
-            className="inline-flex rounded-xl bg-[#ff6400] px-5 py-3 text-sm font-semibold text-white hover:opacity-90"
-          >
-            Send message
-          </button>
-        </form>
+<ContactForm
+  messagePlaceholder="Briefly describe your context or question"
+  defaultSubject="SEO Consulting"
+/>
       </section>
     </div>
   );
