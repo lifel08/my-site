@@ -82,7 +82,6 @@ export async function POST(req: Request) {
 
     const turnstile = await verifyTurnstile(turnstileToken, ip);
     if (!turnstile.ok) {
-      // helpful server log
       console.error("Turnstile failed:", { ip, error: turnstile.error, raw: turnstile.raw });
       return NextResponse.json({ ok: false, error: turnstile.error }, { status: 400 });
     }
@@ -102,41 +101,31 @@ export async function POST(req: Request) {
 
     const resend = new Resend(resendKey);
 
-const { data, error } = await resend.emails.send({
-  from,
-  to,
-  replyTo: email,
-  subject: subject ? `Website inquiry: ${subject} — ${name}` : `Website inquiry: ${name}`,
-  text: [
-    "New website inquiry",
-    "-------------------",
-    `Subject: ${subject || "-"}`,
-    `Name: ${name}`,
-    `Email: ${email}`,
-    "",
-    "Message:",
-    message,
-    "",
-    `IP: ${ip}`,
-    `Time: ${new Date().toISOString()}`,
-  ].join("\n"),
-});
+    const { data, error } = await resend.emails.send({
+      from,
+      to,
+      replyTo: email,
+      subject: subject ? `Website inquiry: ${subject} — ${name}` : `Website inquiry: ${name}`,
+      text: [
+        "New website inquiry",
+        "-------------------",
+        `Subject: ${subject || "-"}`,
+        `Name: ${name}`,
+        `Email: ${email}`,
+        "",
+        "Message:",
+        message,
+        "",
+        `IP: ${ip}`,
+        `Time: ${new Date().toISOString()}`,
+      ].join("\n"),
+    });
 
-if (error) {
-  console.error("Resend send error:", error);
-  return NextResponse.json(
-    { ok: false, error: "resend_error" },
-    { status: 502 }
-  );
-}
+    if (error) {
+      console.error("RESEND SEND ERROR:", error);
+      return NextResponse.json({ ok: false, error: "resend_error" }, { status: 502 });
+    }
 
-return NextResponse.json(
-  { ok: true, resendId: data?.id },
-  { status: 200 }
-);
-
-
-    // Critical: return resend id so the frontend can confirm a real send happened
     return NextResponse.json({ ok: true, resendId: data?.id }, { status: 200 });
   } catch (err: any) {
     const msg = typeof err?.message === "string" ? err.message : "unknown";
