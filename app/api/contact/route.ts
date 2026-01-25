@@ -39,18 +39,18 @@ async function verifyTurnstile(token: string, ip: string) {
 
   const data = await resp.json();
 
-  // Cloudflare returns: { success: boolean, "error-codes"?: string[] }
   if (!data?.success) {
     const codes = Array.isArray(data?.["error-codes"]) ? data["error-codes"].join(",") : "unknown";
-    return { ok: false as const, error: `turnstile_failed:${codes}` };
+    return { ok: false as const, error: `turnstile_failed:${codes}`, raw: data };
   }
 
-  return { ok: true as const };
+  return { ok: true as const, raw: data };
 }
 
 export async function POST(req: Request) {
   try {
     const ip = getClientIp(req);
+
     if (isRateLimited(ip)) {
       return NextResponse.json({ ok: false, error: "rate_limited" }, { status: 429 });
     }
@@ -73,7 +73,7 @@ export async function POST(req: Request) {
 
     // Honeypot hit -> silently accept (drop)
     if (honeypot) {
-      return NextResponse.json({ ok: true });
+      return NextResponse.json({ ok: true, dropped: true }, { status: 200 });
     }
 
     if (!turnstileToken) {
@@ -82,6 +82,8 @@ export async function POST(req: Request) {
 
     const turnstile = await verifyTurnstile(turnstileToken, ip);
     if (!turnstile.ok) {
+      // helpful server log
+      console.error("Turnstile failed:", { ip, error: turnstile.error, raw: turnstile.raw });
       return NextResponse.json({ ok: false, error: turnstile.error }, { status: 400 });
     }
 
@@ -90,34 +92,55 @@ export async function POST(req: Request) {
     const from = process.env.CONTACT_FROM_EMAIL;
 
     if (!resendKey || !to || !from) {
+      console.error("Missing email env:", {
+        hasResendKey: Boolean(resendKey),
+        hasTo: Boolean(to),
+        hasFrom: Boolean(from),
+      });
       return NextResponse.json({ ok: false, error: "missing_email_env" }, { status: 500 });
     }
 
     const resend = new Resend(resendKey);
 
-    await resend.emails.send({
-      from,
-      to,
-      replyTo: email,
-      subject: subject ? `Website inquiry: ${subject} — ${name}` : `Website inquiry: ${name}`,
-      text: [
-        "New website inquiry",
-        "-------------------",
-        `Subject: ${subject || "-"}`,
-        `Name: ${name}`,
-        `Email: ${email}`,
-        "",
-        "Message:",
-        message,
-        "",
-        `IP: ${ip}`,
-        `Time: ${new Date().toISOString()}`,
-      ].join("\n"),
-    });
+const { data, error } = await resend.emails.send({
+  from,
+  to,
+  replyTo: email,
+  subject: subject ? `Website inquiry: ${subject} — ${name}` : `Website inquiry: ${name}`,
+  text: [
+    "New website inquiry",
+    "-------------------",
+    `Subject: ${subject || "-"}`,
+    `Name: ${name}`,
+    `Email: ${email}`,
+    "",
+    "Message:",
+    message,
+    "",
+    `IP: ${ip}`,
+    `Time: ${new Date().toISOString()}`,
+  ].join("\n"),
+});
 
-    return NextResponse.json({ ok: true });
+if (error) {
+  console.error("Resend send error:", error);
+  return NextResponse.json(
+    { ok: false, error: "resend_error" },
+    { status: 502 }
+  );
+}
+
+return NextResponse.json(
+  { ok: true, resendId: data?.id },
+  { status: 200 }
+);
+
+
+    // Critical: return resend id so the frontend can confirm a real send happened
+    return NextResponse.json({ ok: true, resendId: data?.id }, { status: 200 });
   } catch (err: any) {
     const msg = typeof err?.message === "string" ? err.message : "unknown";
+    console.error("API /contact exception:", err);
     return NextResponse.json({ ok: false, error: `server_error:${msg}` }, { status: 500 });
   }
 }
