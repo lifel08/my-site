@@ -1,6 +1,6 @@
 "use client";
 
-console.log("CONTACTFORM_VERSION = 2026-01-26-tokenref-sync-v1");
+console.log("CONTACTFORM_VERSION = 2026-01-26-tokenref-sync-v2-formel");
 
 import { useEffect, useRef, useState } from "react";
 
@@ -30,18 +30,20 @@ export default function ContactForm({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const widgetIdRef = useRef<string | null>(null);
 
-  // Hard guard against double submits
+  // Prevent double submit
   const inFlightRef = useRef(false);
 
-  // Token state + ref (IMPORTANT: ref is updated synchronously in callbacks)
+  // Token state + ref (kept in sync synchronously)
   const [token, setToken] = useState("");
   const tokenRef = useRef("");
 
-  // Status + error
+  // UI state
   const [status, setStatus] = useState<Status>("idle");
-  const [errorMsg, setErrorMsg] = useState<string>("");
+  const [errorMsg, setErrorMsg] = useState("");
 
-  // Load Turnstile script once
+  /* ------------------------------------------------------------------ */
+  /* Load Turnstile script once                                          */
+  /* ------------------------------------------------------------------ */
   useEffect(() => {
     if (!siteKey) return;
 
@@ -49,14 +51,17 @@ export default function ContactForm({
     if (!document.getElementById(scriptId)) {
       const s = document.createElement("script");
       s.id = scriptId;
-      s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+      s.src =
+        "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
       s.async = true;
       s.defer = true;
       document.body.appendChild(s);
     }
   }, [siteKey]);
 
-  // Render widget whenever we have a container AND no widgetId yet
+  /* ------------------------------------------------------------------ */
+  /* Render Turnstile widget                                             */
+  /* ------------------------------------------------------------------ */
   useEffect(() => {
     if (!siteKey) return;
 
@@ -71,7 +76,6 @@ export default function ContactForm({
         widgetIdRef.current = ts.render(el, {
           sitekey: siteKey,
           callback: (t: string) => {
-            // Critical: keep ref in sync immediately (no effect lag)
             tokenRef.current = t;
             setToken(t);
           },
@@ -85,7 +89,7 @@ export default function ContactForm({
           },
         });
       } catch {
-        // ignore
+        // ignore – retry via interval
       }
     };
 
@@ -97,28 +101,28 @@ export default function ContactForm({
     return () => window.clearInterval(i);
   }, [siteKey]);
 
-  /**
-   * Hard reset without using turnstile.reset/remove.
-   * Avoids any chance of "reading 'reset' of null".
-   */
+  /* ------------------------------------------------------------------ */
+  /* Hard reset without calling turnstile.reset/remove                   */
+  /* ------------------------------------------------------------------ */
   function hardResetWidget() {
-    // Clear token (state + ref)
     tokenRef.current = "";
     setToken("");
-
-    // Forget current widget id
     widgetIdRef.current = null;
 
-    // Clear container so Turnstile can render fresh
     if (containerRef.current) {
       containerRef.current.innerHTML = "";
     }
-    // The render effect/interval will render again automatically
   }
 
+  /* ------------------------------------------------------------------ */
+  /* Submit handler (NULL-SAFE)                                          */
+  /* ------------------------------------------------------------------ */
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (inFlightRef.current) return;
+
+    // CRITICAL: capture form synchronously
+    const formEl = e.currentTarget;
 
     const currentToken = tokenRef.current;
     if (!currentToken) {
@@ -131,7 +135,7 @@ export default function ContactForm({
     setStatus("sending");
     setErrorMsg("");
 
-    const fd = new FormData(e.currentTarget);
+    const fd = new FormData(formEl);
     const payload = {
       name: String(fd.get("name") ?? "").trim(),
       email: String(fd.get("email") ?? "").trim(),
@@ -148,7 +152,6 @@ export default function ContactForm({
         body: JSON.stringify(payload),
       });
 
-      // Prefer explicit server contract (ok:true) if provided
       let json: any = null;
       try {
         json = await res.json();
@@ -158,18 +161,16 @@ export default function ContactForm({
 
       if (res.ok && (json?.ok === true || json === null)) {
         setStatus("success");
-        e.currentTarget.reset();
+        formEl.reset(); // SAFE
         hardResetWidget();
         return;
       }
 
       const msg =
-        json?.error
-          ? String(json.error)
-          : json?.message
-            ? String(json.message)
-            : "Request failed.";
-      setErrorMsg(msg);
+        json?.error ??
+        json?.message ??
+        "Request failed.";
+      setErrorMsg(String(msg));
       setStatus("error");
       hardResetWidget();
     } catch (err) {
@@ -183,6 +184,9 @@ export default function ContactForm({
     }
   }
 
+  /* ------------------------------------------------------------------ */
+  /* UI helpers                                                         */
+  /* ------------------------------------------------------------------ */
   const clearErrorOnChange = () => {
     if (status === "error") {
       setStatus("idle");
@@ -190,8 +194,11 @@ export default function ContactForm({
     }
   };
 
-  const sendDisabled = status === "sending" || !token; // token state is fine now (ref is synced immediately)
+  const sendDisabled = status === "sending" || !token;
 
+  /* ------------------------------------------------------------------ */
+  /* Render                                                             */
+  /* ------------------------------------------------------------------ */
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <input
