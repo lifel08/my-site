@@ -245,10 +245,6 @@ export default function ContactForm({
         {status === "sending" ? "Sending..." : "Send message"}
       </button>
 
-      {/* Debug (remove later) */}
-      <p className="text-xs text-neutral-500">
-        debug: status={status} token={token ? "present" : "missing"}
-      </p>
       {errorMsg && (
         <p className="text-xs text-neutral-500">debug: errorMsg={errorMsg}</p>
       )}
