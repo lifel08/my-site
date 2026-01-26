@@ -27,7 +27,6 @@ export default function ContactForm({
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const widgetIdRef = useRef<string | null>(null);
-
   const inFlightRef = useRef(false);
 
   const [token, setToken] = useState("");
@@ -41,14 +40,18 @@ export default function ContactForm({
 
   // DEBUG: log every status change
   const setStatus = (next: Status) => {
-    console.log("[contact] setStatus ->", next, "| token:", tokenRef.current ? "present" : "missing");
+    console.log(
+      "[contact] setStatus ->",
+      next,
+      "| token:",
+      tokenRef.current ? "present" : "missing"
+    );
     _setStatus(next);
   };
 
   useEffect(() => {
     if (!siteKey) return;
 
-    // Load Turnstile script once
     const scriptId = "cf-turnstile";
     if (!document.getElementById(scriptId)) {
       const s = document.createElement("script");
@@ -99,15 +102,22 @@ export default function ContactForm({
 
   function resetTurnstileAndToken() {
     console.log("[contact] resetTurnstileAndToken()");
+
+    // Always clear token locally (never throws)
     setToken("");
     tokenRef.current = "";
 
+    // Best-effort turnstile reset (must never throw)
     try {
-      if (window.turnstile && widgetIdRef.current) {
-        window.turnstile.reset(widgetIdRef.current);
+      const ts = window.turnstile;
+      const wid = widgetIdRef.current;
+
+      if (ts && typeof ts.reset === "function") {
+        if (wid) ts.reset(wid);
+        else ts.reset();
       }
-    } catch {
-      // ignore
+    } catch (err) {
+      console.log("[contact] turnstile reset failed (ignored):", err);
     }
   }
 
@@ -154,9 +164,8 @@ export default function ContactForm({
       console.log("[contact] response status:", res.status, "res.ok:", res.ok);
       console.log("[contact] response content-type:", res.headers.get("content-type"));
 
-      // IMPORTANT: if server returned 2xx, treat as SUCCESS for UI
+      // IMPORTANT: treat any 2xx as SUCCESS for UI
       if (res.ok) {
-        // Optional: try to read JSON for logging only (never impacts UI)
         res
           .clone()
           .json()
@@ -169,7 +178,6 @@ export default function ContactForm({
         return;
       }
 
-      // Non-2xx: read body for error details
       const raw = await res.text().catch(() => "");
       console.log("[contact] non-2xx raw body:", raw);
 
@@ -177,9 +185,7 @@ export default function ContactForm({
       setStatus("error");
       resetTurnstileAndToken();
     } catch (err) {
-      // DEBUG: show the real error
       console.error("[contact] submit failed:", err);
-
       setErrorMsg(err instanceof Error ? `${err.name}: ${err.message}` : "Unknown error");
       setStatus("error");
       resetTurnstileAndToken();
@@ -225,12 +231,10 @@ export default function ContactForm({
         className="w-full rounded-xl border border-neutral-300 px-4 py-3 text-sm"
       />
 
-      {/* Honeypot */}
       <div className="hidden" aria-hidden="true">
         <input name="company" tabIndex={-1} autoComplete="off" />
       </div>
 
-      {/* Turnstile */}
       <div ref={containerRef} className="min-h-[65px]" />
 
       <button
@@ -243,7 +247,6 @@ export default function ContactForm({
         {status === "sending" ? "Sending..." : "Send message"}
       </button>
 
-      {/* DEBUG UI */}
       <p className="text-xs text-neutral-500">
         debug: status={status} token={token ? "present" : "missing"}
       </p>
