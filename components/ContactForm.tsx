@@ -4,11 +4,12 @@ import { useEffect, useRef, useState } from "react";
 
 declare global {
   interface Window {
+    // Turnstile may be undefined OR (in some runtimes) temporarily nullish
     turnstile?: {
       render: (el: HTMLElement, options: any) => string;
-      reset: (widgetId?: string) => void;
-      remove: (widgetId: string) => void;
-    };
+      reset?: (widgetId?: string) => void;
+      remove?: (widgetId: string) => void;
+    } | null;
   }
 }
 
@@ -27,18 +28,19 @@ export default function ContactForm({
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const widgetIdRef = useRef<string | null>(null);
+
+  // Hard guard against double-submits (React state is not synchronous)
   const inFlightRef = useRef(false);
 
+  // Token state + ref (ref is source of truth at submit time)
   const [token, setToken] = useState("");
   const tokenRef = useRef("");
   useEffect(() => {
     tokenRef.current = token;
   }, [token]);
 
+  // Status + debug logging wrapper
   const [status, _setStatus] = useState<Status>("idle");
-  const [errorMsg, setErrorMsg] = useState<string>("");
-
-  // DEBUG: log every status change
   const setStatus = (next: Status) => {
     console.log(
       "[contact] setStatus ->",
@@ -49,6 +51,10 @@ export default function ContactForm({
     _setStatus(next);
   };
 
+  // Debug: show the underlying error (remove later)
+  const [errorMsg, setErrorMsg] = useState<string>("");
+
+  // Load and render Turnstile widget
   useEffect(() => {
     if (!siteKey) return;
 
@@ -63,23 +69,31 @@ export default function ContactForm({
     }
 
     const tryRender = () => {
-      if (!containerRef.current || !window.turnstile || widgetIdRef.current) return;
+      if (!containerRef.current) return;
+      if (!window.turnstile || widgetIdRef.current) return;
 
-      widgetIdRef.current = window.turnstile.render(containerRef.current, {
-        sitekey: siteKey,
-        callback: (t: string) => {
-          console.log("[contact] turnstile callback token set");
-          setToken(t);
-        },
-        "expired-callback": () => {
-          console.log("[contact] turnstile expired-callback (token cleared)");
-          setToken("");
-        },
-        "error-callback": () => {
-          console.log("[contact] turnstile error-callback (token cleared)");
-          setToken("");
-        },
-      });
+      // render returns widgetId
+      try {
+        const wid = window.turnstile.render(containerRef.current, {
+          sitekey: siteKey,
+          callback: (t: string) => {
+            console.log("[contact] turnstile callback token set");
+            setToken(t);
+          },
+          "expired-callback": () => {
+            console.log("[contact] turnstile expired-callback (token cleared)");
+            setToken("");
+          },
+          "error-callback": () => {
+            console.log("[contact] turnstile error-callback (token cleared)");
+            setToken("");
+          },
+        });
+
+        widgetIdRef.current = wid;
+      } catch (err) {
+        console.log("[contact] turnstile render failed (ignored):", err);
+      }
     };
 
     const i = window.setInterval(() => {
@@ -89,12 +103,14 @@ export default function ContactForm({
 
     return () => {
       window.clearInterval(i);
-      if (window.turnstile && widgetIdRef.current) {
-        try {
-          window.turnstile.remove(widgetIdRef.current);
-        } catch {
-          // ignore
-        }
+
+      // Best-effort remove (must never throw)
+      try {
+        const wid = widgetIdRef.current;
+        if (wid) window.turnstile?.remove?.(wid);
+      } catch {
+        // ignore
+      } finally {
         widgetIdRef.current = null;
       }
     };
@@ -103,19 +119,15 @@ export default function ContactForm({
   function resetTurnstileAndToken() {
     console.log("[contact] resetTurnstileAndToken()");
 
-    // Always clear token locally (never throws)
+    // Always clear token locally
     setToken("");
     tokenRef.current = "";
 
     // Best-effort turnstile reset (must never throw)
     try {
-      const ts = window.turnstile;
-      const wid = widgetIdRef.current;
-
-      if (ts && typeof ts.reset === "function") {
-        if (wid) ts.reset(wid);
-        else ts.reset();
-      }
+      const wid = widgetIdRef.current ?? undefined;
+      // Optional chaining prevents "reading 'reset' of null"
+      window.turnstile?.reset?.(wid);
     } catch (err) {
       console.log("[contact] turnstile reset failed (ignored):", err);
     }
@@ -126,10 +138,7 @@ export default function ContactForm({
 
     console.log("[contact] onSubmit fired. inFlight:", inFlightRef.current);
 
-    if (inFlightRef.current) {
-      console.log("[contact] blocked: inFlightRef.current === true");
-      return;
-    }
+    if (inFlightRef.current) return;
 
     const currentToken = tokenRef.current;
     console.log("[contact] token at submit:", currentToken ? "present" : "missing");
@@ -164,7 +173,7 @@ export default function ContactForm({
       console.log("[contact] response status:", res.status, "res.ok:", res.ok);
       console.log("[contact] response content-type:", res.headers.get("content-type"));
 
-      // IMPORTANT: treat any 2xx as SUCCESS for UI
+      // Treat any 2xx as SUCCESS for UI
       if (res.ok) {
         res
           .clone()
@@ -178,6 +187,7 @@ export default function ContactForm({
         return;
       }
 
+      // Non-2xx: read response body for debugging
       const raw = await res.text().catch(() => "");
       console.log("[contact] non-2xx raw body:", raw);
 
@@ -186,7 +196,13 @@ export default function ContactForm({
       resetTurnstileAndToken();
     } catch (err) {
       console.error("[contact] submit failed:", err);
-      setErrorMsg(err instanceof Error ? `${err.name}: ${err.message}` : "Unknown error");
+
+      const msg =
+        err instanceof Error
+          ? `${err.name}: ${err.message}\n${err.stack ?? ""}`
+          : String(err);
+
+      setErrorMsg(msg || "Unknown error");
       setStatus("error");
       resetTurnstileAndToken();
     } finally {
@@ -197,7 +213,6 @@ export default function ContactForm({
 
   const clearErrorOnChange = () => {
     if (status === "error") {
-      console.log("[contact] clearErrorOnChange -> idle");
       setStatus("idle");
       setErrorMsg("");
     }
@@ -231,10 +246,12 @@ export default function ContactForm({
         className="w-full rounded-xl border border-neutral-300 px-4 py-3 text-sm"
       />
 
+      {/* Honeypot */}
       <div className="hidden" aria-hidden="true">
         <input name="company" tabIndex={-1} autoComplete="off" />
       </div>
 
+      {/* Turnstile */}
       <div ref={containerRef} className="min-h-[65px]" />
 
       <button
@@ -247,6 +264,7 @@ export default function ContactForm({
         {status === "sending" ? "Sending..." : "Send message"}
       </button>
 
+      {/* DEBUG UI (remove after fixing) */}
       <p className="text-xs text-neutral-500">
         debug: status={status} token={token ? "present" : "missing"}
       </p>
