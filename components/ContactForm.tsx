@@ -4,9 +4,9 @@ import { useEffect, useRef, useState } from "react";
 
 declare global {
   interface Window {
-    // Turnstile may be undefined OR (in some runtimes) temporarily nullish
     turnstile?: {
       render: (el: HTMLElement, options: any) => string;
+      // We intentionally do NOT rely on reset/remove at runtime.
       reset?: (widgetId?: string) => void;
       remove?: (widgetId: string) => void;
     } | null;
@@ -29,32 +29,21 @@ export default function ContactForm({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const widgetIdRef = useRef<string | null>(null);
 
-  // Hard guard against double-submits (React state is not synchronous)
+  // Hard guard against double submits
   const inFlightRef = useRef(false);
 
-  // Token state + ref (ref is source of truth at submit time)
+  // Token state + ref
   const [token, setToken] = useState("");
   const tokenRef = useRef("");
   useEffect(() => {
     tokenRef.current = token;
   }, [token]);
 
-  // Status + debug logging wrapper
-  const [status, _setStatus] = useState<Status>("idle");
-  const setStatus = (next: Status) => {
-    console.log(
-      "[contact] setStatus ->",
-      next,
-      "| token:",
-      tokenRef.current ? "present" : "missing"
-    );
-    _setStatus(next);
-  };
-
-  // Debug: show the underlying error (remove later)
+  // Status + error
+  const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState<string>("");
 
-  // Load and render Turnstile widget
+  // Load Turnstile script once
   useEffect(() => {
     if (!siteKey) return;
 
@@ -67,32 +56,28 @@ export default function ContactForm({
       s.defer = true;
       document.body.appendChild(s);
     }
+  }, [siteKey]);
+
+  // Render widget whenever we have a container AND no widgetId yet
+  useEffect(() => {
+    if (!siteKey) return;
 
     const tryRender = () => {
-      if (!containerRef.current) return;
-      if (!window.turnstile || widgetIdRef.current) return;
+      const el = containerRef.current;
+      const ts = window.turnstile;
 
-      // render returns widgetId
+      if (!el) return;
+      if (!ts || widgetIdRef.current) return;
+
       try {
-        const wid = window.turnstile.render(containerRef.current, {
+        widgetIdRef.current = ts.render(el, {
           sitekey: siteKey,
-          callback: (t: string) => {
-            console.log("[contact] turnstile callback token set");
-            setToken(t);
-          },
-          "expired-callback": () => {
-            console.log("[contact] turnstile expired-callback (token cleared)");
-            setToken("");
-          },
-          "error-callback": () => {
-            console.log("[contact] turnstile error-callback (token cleared)");
-            setToken("");
-          },
+          callback: (t: string) => setToken(t),
+          "expired-callback": () => setToken(""),
+          "error-callback": () => setToken(""),
         });
-
-        widgetIdRef.current = wid;
-      } catch (err) {
-        console.log("[contact] turnstile render failed (ignored):", err);
+      } catch {
+        // ignore
       }
     };
 
@@ -101,48 +86,36 @@ export default function ContactForm({
       if (widgetIdRef.current) window.clearInterval(i);
     }, 100);
 
-    return () => {
-      window.clearInterval(i);
-
-      // Best-effort remove (must never throw)
-      try {
-        const wid = widgetIdRef.current;
-        if (wid) window.turnstile?.remove?.(wid);
-      } catch {
-        // ignore
-      } finally {
-        widgetIdRef.current = null;
-      }
-    };
+    return () => window.clearInterval(i);
   }, [siteKey]);
 
-  function resetTurnstileAndToken() {
-    console.log("[contact] resetTurnstileAndToken()");
-
-    // Always clear token locally
+  /**
+   * Hard reset without using turnstile.reset/remove.
+   * This guarantees we never crash due to "reading 'reset' of null".
+   */
+  function hardResetWidget() {
+    // Clear token
     setToken("");
     tokenRef.current = "";
 
-    // Best-effort turnstile reset (must never throw)
-    try {
-      const wid = widgetIdRef.current ?? undefined;
-      // Optional chaining prevents "reading 'reset' of null"
-      window.turnstile?.reset?.(wid);
-    } catch (err) {
-      console.log("[contact] turnstile reset failed (ignored):", err);
+    // Forget current widget id
+    widgetIdRef.current = null;
+
+    // Clear container so Turnstile can render fresh
+    if (containerRef.current) {
+      containerRef.current.innerHTML = "";
     }
+
+    // After a short delay, the render effect/interval will render again
+    // (no need to call reset/remove)
   }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    console.log("[contact] onSubmit fired. inFlight:", inFlightRef.current);
-
     if (inFlightRef.current) return;
 
     const currentToken = tokenRef.current;
-    console.log("[contact] token at submit:", currentToken ? "present" : "missing");
-
     if (!currentToken) {
       setErrorMsg("Please complete the verification.");
       setStatus("error");
@@ -170,44 +143,28 @@ export default function ContactForm({
         body: JSON.stringify(payload),
       });
 
-      console.log("[contact] response status:", res.status, "res.ok:", res.ok);
-      console.log("[contact] response content-type:", res.headers.get("content-type"));
-
-      // Treat any 2xx as SUCCESS for UI
+      // UI rule: if server returned 2xx, treat as success
       if (res.ok) {
-        res
-          .clone()
-          .json()
-          .then((d) => console.log("[contact] server json:", d))
-          .catch((err) => console.log("[contact] json parse skipped:", err));
-
         setStatus("success");
         e.currentTarget.reset();
-        resetTurnstileAndToken();
+        hardResetWidget();
         return;
       }
 
-      // Non-2xx: read response body for debugging
+      // Non-2xx: show message if available
       const raw = await res.text().catch(() => "");
-      console.log("[contact] non-2xx raw body:", raw);
-
       setErrorMsg(raw || "Request failed.");
       setStatus("error");
-      resetTurnstileAndToken();
+      hardResetWidget();
     } catch (err) {
-      console.error("[contact] submit failed:", err);
-
+      // Show the real client error for debugging
       const msg =
-        err instanceof Error
-          ? `${err.name}: ${err.message}\n${err.stack ?? ""}`
-          : String(err);
-
-      setErrorMsg(msg || "Unknown error");
+        err instanceof Error ? `${err.name}: ${err.message}` : "Unknown error";
+      setErrorMsg(msg);
       setStatus("error");
-      resetTurnstileAndToken();
+      hardResetWidget();
     } finally {
       inFlightRef.current = false;
-      console.log("[contact] finally: inFlight reset to false");
     }
   }
 
@@ -264,7 +221,7 @@ export default function ContactForm({
         {status === "sending" ? "Sending..." : "Send message"}
       </button>
 
-      {/* DEBUG UI (remove after fixing) */}
+      {/* Remove these debug lines later */}
       <p className="text-xs text-neutral-500">
         debug: status={status} token={token ? "present" : "missing"}
       </p>
