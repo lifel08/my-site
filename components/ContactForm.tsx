@@ -1,7 +1,5 @@
-console.log("CONTACTFORM_VERSION = 2026-01-26-noreset-v2");
-
 "use client";
-
+console.log("CONTACTFORM_VERSION = 2026-01-26-noreset-v2");
 import { useEffect, useRef, useState } from "react";
 
 declare global {
