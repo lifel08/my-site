@@ -133,9 +133,8 @@ export default function HomePage() {
         <div className="lg:col-span-5">
           <div className="rounded-3xl border border-neutral-200 bg-white p-3">
             <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-neutral-100">
-              {/* Replace /images/lisa.jpg with your actual image path */}
               <Image
-                src="/images/lisa.jpg"
+                src="/images/lisa_fellinger.jpg"
                 alt="Lisa Fellinger"
                 fill
                 className="object-cover"
