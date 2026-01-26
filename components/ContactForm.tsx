@@ -1,12 +1,13 @@
 "use client";
-console.log("CONTACTFORM_VERSION = 2026-01-26-noreset-v2");
+
+console.log("CONTACTFORM_VERSION = 2026-01-26-tokenref-sync-v1");
+
 import { useEffect, useRef, useState } from "react";
 
 declare global {
   interface Window {
     turnstile?: {
       render: (el: HTMLElement, options: any) => string;
-      // We intentionally do NOT rely on reset/remove at runtime.
       reset?: (widgetId?: string) => void;
       remove?: (widgetId: string) => void;
     } | null;
@@ -32,12 +33,9 @@ export default function ContactForm({
   // Hard guard against double submits
   const inFlightRef = useRef(false);
 
-  // Token state + ref
+  // Token state + ref (IMPORTANT: ref is updated synchronously in callbacks)
   const [token, setToken] = useState("");
   const tokenRef = useRef("");
-  useEffect(() => {
-    tokenRef.current = token;
-  }, [token]);
 
   // Status + error
   const [status, setStatus] = useState<Status>("idle");
@@ -72,9 +70,19 @@ export default function ContactForm({
       try {
         widgetIdRef.current = ts.render(el, {
           sitekey: siteKey,
-          callback: (t: string) => setToken(t),
-          "expired-callback": () => setToken(""),
-          "error-callback": () => setToken(""),
+          callback: (t: string) => {
+            // Critical: keep ref in sync immediately (no effect lag)
+            tokenRef.current = t;
+            setToken(t);
+          },
+          "expired-callback": () => {
+            tokenRef.current = "";
+            setToken("");
+          },
+          "error-callback": () => {
+            tokenRef.current = "";
+            setToken("");
+          },
         });
       } catch {
         // ignore
@@ -91,12 +99,12 @@ export default function ContactForm({
 
   /**
    * Hard reset without using turnstile.reset/remove.
-   * This guarantees we never crash due to "reading 'reset' of null".
+   * Avoids any chance of "reading 'reset' of null".
    */
   function hardResetWidget() {
-    // Clear token
-    setToken("");
+    // Clear token (state + ref)
     tokenRef.current = "";
+    setToken("");
 
     // Forget current widget id
     widgetIdRef.current = null;
@@ -105,14 +113,11 @@ export default function ContactForm({
     if (containerRef.current) {
       containerRef.current.innerHTML = "";
     }
-
-    // After a short delay, the render effect/interval will render again
-    // (no need to call reset/remove)
+    // The render effect/interval will render again automatically
   }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-
     if (inFlightRef.current) return;
 
     const currentToken = tokenRef.current;
@@ -143,21 +148,31 @@ export default function ContactForm({
         body: JSON.stringify(payload),
       });
 
-      // UI rule: if server returned 2xx, treat as success
-      if (res.ok) {
+      // Prefer explicit server contract (ok:true) if provided
+      let json: any = null;
+      try {
+        json = await res.json();
+      } catch {
+        // ignore
+      }
+
+      if (res.ok && (json?.ok === true || json === null)) {
         setStatus("success");
         e.currentTarget.reset();
         hardResetWidget();
         return;
       }
 
-      // Non-2xx: show message if available
-      const raw = await res.text().catch(() => "");
-      setErrorMsg(raw || "Request failed.");
+      const msg =
+        json?.error
+          ? String(json.error)
+          : json?.message
+            ? String(json.message)
+            : "Request failed.";
+      setErrorMsg(msg);
       setStatus("error");
       hardResetWidget();
     } catch (err) {
-      // Show the real client error for debugging
       const msg =
         err instanceof Error ? `${err.name}: ${err.message}` : "Unknown error";
       setErrorMsg(msg);
@@ -174,6 +189,8 @@ export default function ContactForm({
       setErrorMsg("");
     }
   };
+
+  const sendDisabled = status === "sending" || !token; // token state is fine now (ref is synced immediately)
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">
@@ -213,7 +230,7 @@ export default function ContactForm({
 
       <button
         type="submit"
-        disabled={status === "sending" || !token}
+        disabled={sendDisabled}
         className={`inline-flex rounded-xl bg-[#ff6400] px-5 py-3 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 ${
           status === "sending" ? "pointer-events-none" : ""
         }`}
@@ -221,17 +238,23 @@ export default function ContactForm({
         {status === "sending" ? "Sending..." : "Send message"}
       </button>
 
-      {/* Remove these debug lines later */}
+      {/* Debug (remove later) */}
       <p className="text-xs text-neutral-500">
         debug: status={status} token={token ? "present" : "missing"}
       </p>
-      {errorMsg && <p className="text-xs text-neutral-500">debug: errorMsg={errorMsg}</p>}
+      {errorMsg && (
+        <p className="text-xs text-neutral-500">debug: errorMsg={errorMsg}</p>
+      )}
 
       {status === "success" && (
-        <p className="text-sm text-green-700">Thanks — your message has been sent.</p>
+        <p className="text-sm text-green-700">
+          Thanks — your message has been sent.
+        </p>
       )}
       {status === "error" && (
-        <p className="text-sm text-red-700">Something went wrong. Please try again.</p>
+        <p className="text-sm text-red-700">
+          Something went wrong. Please try again.
+        </p>
       )}
     </form>
   );
