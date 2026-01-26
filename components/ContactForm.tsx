@@ -39,15 +39,16 @@ export default function ContactForm({
   const [status, _setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState<string>("");
 
-  // DEBUG: log every status change (this will tell us exactly who sets "error")
+  // DEBUG: log every status change
   const setStatus = (next: Status) => {
-    console.log("[contact] setStatus ->", next, "| token:", tokenRef.current);
+    console.log("[contact] setStatus ->", next, "| token:", tokenRef.current ? "present" : "missing");
     _setStatus(next);
   };
 
   useEffect(() => {
     if (!siteKey) return;
 
+    // Load Turnstile script once
     const scriptId = "cf-turnstile";
     if (!document.getElementById(scriptId)) {
       const s = document.createElement("script");
@@ -121,7 +122,7 @@ export default function ContactForm({
     }
 
     const currentToken = tokenRef.current;
-    console.log("[contact] token at submit:", currentToken ? "(present)" : "(missing)");
+    console.log("[contact] token at submit:", currentToken ? "present" : "missing");
 
     if (!currentToken) {
       setErrorMsg("Please complete the verification.");
@@ -138,7 +139,7 @@ export default function ContactForm({
       name: String(fd.get("name") ?? "").trim(),
       email: String(fd.get("email") ?? "").trim(),
       message: String(fd.get("message") ?? "").trim(),
-      company: String(fd.get("company") ?? "").trim(),
+      company: String(fd.get("company") ?? "").trim(), // honeypot
       turnstileToken: currentToken,
       subject: defaultSubject ?? "",
     };
@@ -153,33 +154,33 @@ export default function ContactForm({
       console.log("[contact] response status:", res.status, "res.ok:", res.ok);
       console.log("[contact] response content-type:", res.headers.get("content-type"));
 
-      // DEBUG: read raw text first to avoid any json() illusions
-      const raw = await res.text();
-      console.log("[contact] raw body:", raw);
+      // IMPORTANT: if server returned 2xx, treat as SUCCESS for UI
+      if (res.ok) {
+        // Optional: try to read JSON for logging only (never impacts UI)
+        res
+          .clone()
+          .json()
+          .then((d) => console.log("[contact] server json:", d))
+          .catch((err) => console.log("[contact] json parse skipped:", err));
 
-      let data: any = null;
-      try {
-        data = JSON.parse(raw);
-      } catch (err) {
-        console.log("[contact] JSON.parse failed:", err);
-      }
-      console.log("[contact] parsed data:", data);
-
-      if (res.ok && data?.ok === true) {
-        console.log("[contact] SUCCESS branch reached");
         setStatus("success");
         e.currentTarget.reset();
         resetTurnstileAndToken();
         return;
       }
 
-      console.log("[contact] ERROR branch reached", { resOk: res.ok, data });
-      setErrorMsg(data?.error ? String(data.error) : "Request failed.");
+      // Non-2xx: read body for error details
+      const raw = await res.text().catch(() => "");
+      console.log("[contact] non-2xx raw body:", raw);
+
+      setErrorMsg(raw || "Request failed.");
       setStatus("error");
       resetTurnstileAndToken();
     } catch (err) {
-      console.log("[contact] fetch threw:", err);
-      setErrorMsg("Network error. Please try again.");
+      // DEBUG: show the real error
+      console.error("[contact] submit failed:", err);
+
+      setErrorMsg(err instanceof Error ? `${err.name}: ${err.message}` : "Unknown error");
       setStatus("error");
       resetTurnstileAndToken();
     } finally {
@@ -224,10 +225,12 @@ export default function ContactForm({
         className="w-full rounded-xl border border-neutral-300 px-4 py-3 text-sm"
       />
 
+      {/* Honeypot */}
       <div className="hidden" aria-hidden="true">
         <input name="company" tabIndex={-1} autoComplete="off" />
       </div>
 
+      {/* Turnstile */}
       <div ref={containerRef} className="min-h-[65px]" />
 
       <button
@@ -240,20 +243,15 @@ export default function ContactForm({
         {status === "sending" ? "Sending..." : "Send message"}
       </button>
 
-      {/* DEBUG: show status + last error message */}
+      {/* DEBUG UI */}
       <p className="text-xs text-neutral-500">
         debug: status={status} token={token ? "present" : "missing"}
       </p>
-      {errorMsg && (
-        <p className="text-xs text-neutral-500">
-          debug: errorMsg={errorMsg}
-        </p>
-      )}
+      {errorMsg && <p className="text-xs text-neutral-500">debug: errorMsg={errorMsg}</p>}
 
       {status === "success" && (
         <p className="text-sm text-green-700">Thanks — your message has been sent.</p>
       )}
-
       {status === "error" && (
         <p className="text-sm text-red-700">Something went wrong. Please try again.</p>
       )}
