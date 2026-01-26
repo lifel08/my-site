@@ -28,25 +28,26 @@ export default function ContactForm({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const widgetIdRef = useRef<string | null>(null);
 
-  // Use a ref as a hard guard against double-submits (React state updates are not synchronous)
   const inFlightRef = useRef(false);
 
-  // Keep the latest token in a ref to avoid race conditions between renders and submit timing
   const [token, setToken] = useState("");
   const tokenRef = useRef("");
   useEffect(() => {
     tokenRef.current = token;
   }, [token]);
 
-  const [status, setStatus] = useState<Status>("idle");
-
-  // Optional: store a more specific error message (still show generic UI copy if you prefer)
+  const [status, _setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState<string>("");
+
+  // DEBUG: log every status change (this will tell us exactly who sets "error")
+  const setStatus = (next: Status) => {
+    console.log("[contact] setStatus ->", next, "| token:", tokenRef.current);
+    _setStatus(next);
+  };
 
   useEffect(() => {
     if (!siteKey) return;
 
-    // Load Turnstile script once
     const scriptId = "cf-turnstile";
     if (!document.getElementById(scriptId)) {
       const s = document.createElement("script");
@@ -62,9 +63,18 @@ export default function ContactForm({
 
       widgetIdRef.current = window.turnstile.render(containerRef.current, {
         sitekey: siteKey,
-        callback: (t: string) => setToken(t),
-        "expired-callback": () => setToken(""),
-        "error-callback": () => setToken(""),
+        callback: (t: string) => {
+          console.log("[contact] turnstile callback token set");
+          setToken(t);
+        },
+        "expired-callback": () => {
+          console.log("[contact] turnstile expired-callback (token cleared)");
+          setToken("");
+        },
+        "error-callback": () => {
+          console.log("[contact] turnstile error-callback (token cleared)");
+          setToken("");
+        },
       });
     };
 
@@ -87,11 +97,10 @@ export default function ContactForm({
   }, [siteKey]);
 
   function resetTurnstileAndToken() {
-    // Token is single-use; always clear it after an attempt
+    console.log("[contact] resetTurnstileAndToken()");
     setToken("");
     tokenRef.current = "";
 
-    // Reset widget so the user can obtain a fresh token
     try {
       if (window.turnstile && widgetIdRef.current) {
         window.turnstile.reset(widgetIdRef.current);
@@ -104,10 +113,16 @@ export default function ContactForm({
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    // Hard guard: prevents the "success then error" UI caused by rapid double-submits
-    if (inFlightRef.current) return;
+    console.log("[contact] onSubmit fired. inFlight:", inFlightRef.current);
+
+    if (inFlightRef.current) {
+      console.log("[contact] blocked: inFlightRef.current === true");
+      return;
+    }
 
     const currentToken = tokenRef.current;
+    console.log("[contact] token at submit:", currentToken ? "(present)" : "(missing)");
+
     if (!currentToken) {
       setErrorMsg("Please complete the verification.");
       setStatus("error");
@@ -123,7 +138,7 @@ export default function ContactForm({
       name: String(fd.get("name") ?? "").trim(),
       email: String(fd.get("email") ?? "").trim(),
       message: String(fd.get("message") ?? "").trim(),
-      company: String(fd.get("company") ?? "").trim(), // honeypot
+      company: String(fd.get("company") ?? "").trim(),
       turnstileToken: currentToken,
       subject: defaultSubject ?? "",
     };
@@ -135,33 +150,47 @@ export default function ContactForm({
         body: JSON.stringify(payload),
       });
 
-      const data = await res.json().catch(() => null);
+      console.log("[contact] response status:", res.status, "res.ok:", res.ok);
+      console.log("[contact] response content-type:", res.headers.get("content-type"));
+
+      // DEBUG: read raw text first to avoid any json() illusions
+      const raw = await res.text();
+      console.log("[contact] raw body:", raw);
+
+      let data: any = null;
+      try {
+        data = JSON.parse(raw);
+      } catch (err) {
+        console.log("[contact] JSON.parse failed:", err);
+      }
+      console.log("[contact] parsed data:", data);
 
       if (res.ok && data?.ok === true) {
+        console.log("[contact] SUCCESS branch reached");
         setStatus("success");
         e.currentTarget.reset();
-
-        // Only after success: reset widget to allow future submissions
         resetTurnstileAndToken();
         return;
       }
 
-      // Error path
+      console.log("[contact] ERROR branch reached", { resOk: res.ok, data });
       setErrorMsg(data?.error ? String(data.error) : "Request failed.");
       setStatus("error");
       resetTurnstileAndToken();
-    } catch {
+    } catch (err) {
+      console.log("[contact] fetch threw:", err);
       setErrorMsg("Network error. Please try again.");
       setStatus("error");
       resetTurnstileAndToken();
     } finally {
       inFlightRef.current = false;
+      console.log("[contact] finally: inFlight reset to false");
     }
   }
 
-  // Optional: clear error state when user edits the form (improves UX)
   const clearErrorOnChange = () => {
     if (status === "error") {
+      console.log("[contact] clearErrorOnChange -> idle");
       setStatus("idle");
       setErrorMsg("");
     }
@@ -195,33 +224,38 @@ export default function ContactForm({
         className="w-full rounded-xl border border-neutral-300 px-4 py-3 text-sm"
       />
 
-      {/* Honeypot */}
       <div className="hidden" aria-hidden="true">
         <input name="company" tabIndex={-1} autoComplete="off" />
       </div>
 
-      {/* Turnstile */}
       <div ref={containerRef} className="min-h-[65px]" />
 
       <button
         type="submit"
         disabled={status === "sending" || !token}
-        className="inline-flex rounded-xl bg-[#ff6400] px-5 py-3 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50"
+        className={`inline-flex rounded-xl bg-[#ff6400] px-5 py-3 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 ${
+          status === "sending" ? "pointer-events-none" : ""
+        }`}
       >
         {status === "sending" ? "Sending..." : "Send message"}
       </button>
+
+      {/* DEBUG: show status + last error message */}
+      <p className="text-xs text-neutral-500">
+        debug: status={status} token={token ? "present" : "missing"}
+      </p>
+      {errorMsg && (
+        <p className="text-xs text-neutral-500">
+          debug: errorMsg={errorMsg}
+        </p>
+      )}
 
       {status === "success" && (
         <p className="text-sm text-green-700">Thanks — your message has been sent.</p>
       )}
 
       {status === "error" && (
-        <p className="text-sm text-red-700">
-          Something went wrong. Please try again.
-          {/* Uncomment for debugging:
-          <span className="block mt-1 text-xs text-red-600">{errorMsg}</span>
-          */}
-        </p>
+        <p className="text-sm text-red-700">Something went wrong. Please try again.</p>
       )}
     </form>
   );
