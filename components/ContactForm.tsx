@@ -17,16 +17,31 @@ type ContactFormProps = {
   defaultSubject?: string;
 };
 
+type Status = "idle" | "sending" | "success" | "error";
+
 export default function ContactForm({
   messagePlaceholder = "Briefly describe your project or question",
   defaultSubject,
 }: ContactFormProps) {
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
+
   const containerRef = useRef<HTMLDivElement | null>(null);
   const widgetIdRef = useRef<string | null>(null);
 
+  // Use a ref as a hard guard against double-submits (React state updates are not synchronous)
+  const inFlightRef = useRef(false);
+
+  // Keep the latest token in a ref to avoid race conditions between renders and submit timing
   const [token, setToken] = useState("");
-  const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
+  const tokenRef = useRef("");
+  useEffect(() => {
+    tokenRef.current = token;
+  }, [token]);
+
+  const [status, setStatus] = useState<Status>("idle");
+
+  // Optional: store a more specific error message (still show generic UI copy if you prefer)
+  const [errorMsg, setErrorMsg] = useState<string>("");
 
   useEffect(() => {
     if (!siteKey) return;
@@ -71,16 +86,37 @@ export default function ContactForm({
     };
   }, [siteKey]);
 
+  function resetTurnstileAndToken() {
+    // Token is single-use; always clear it after an attempt
+    setToken("");
+    tokenRef.current = "";
+
+    // Reset widget so the user can obtain a fresh token
+    try {
+      if (window.turnstile && widgetIdRef.current) {
+        window.turnstile.reset(widgetIdRef.current);
+      }
+    } catch {
+      // ignore
+    }
+  }
+
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    // Require token (keeps UX consistent and avoids unnecessary 400s)
-    if (!token) {
+    // Hard guard: prevents the "success then error" UI caused by rapid double-submits
+    if (inFlightRef.current) return;
+
+    const currentToken = tokenRef.current;
+    if (!currentToken) {
+      setErrorMsg("Please complete the verification.");
       setStatus("error");
       return;
     }
 
+    inFlightRef.current = true;
     setStatus("sending");
+    setErrorMsg("");
 
     const fd = new FormData(e.currentTarget);
     const payload = {
@@ -88,7 +124,7 @@ export default function ContactForm({
       email: String(fd.get("email") ?? "").trim(),
       message: String(fd.get("message") ?? "").trim(),
       company: String(fd.get("company") ?? "").trim(), // honeypot
-      turnstileToken: token,
+      turnstileToken: currentToken,
       subject: defaultSubject ?? "",
     };
 
@@ -99,35 +135,37 @@ export default function ContactForm({
         body: JSON.stringify(payload),
       });
 
-      // Prefer server JSON signal if available
-      let data: any = null;
-      try {
-        data = await res.json();
-      } catch {
-        // ignore
-      }
+      const data = await res.json().catch(() => null);
 
-      if (!res.ok || data?.ok !== true) {
-        setStatus("error");
+      if (res.ok && data?.ok === true) {
+        setStatus("success");
+        e.currentTarget.reset();
+
+        // Only after success: reset widget to allow future submissions
+        resetTurnstileAndToken();
         return;
       }
 
-      setStatus("success");
-      e.currentTarget.reset();
-      setToken("");
-
-      // Turnstile reset should never break success state
-      try {
-        if (window.turnstile && widgetIdRef.current) {
-          window.turnstile.reset(widgetIdRef.current);
-        }
-      } catch {
-        // ignore
-      }
-    } catch {
+      // Error path
+      setErrorMsg(data?.error ? String(data.error) : "Request failed.");
       setStatus("error");
+      resetTurnstileAndToken();
+    } catch {
+      setErrorMsg("Network error. Please try again.");
+      setStatus("error");
+      resetTurnstileAndToken();
+    } finally {
+      inFlightRef.current = false;
     }
   }
+
+  // Optional: clear error state when user edits the form (improves UX)
+  const clearErrorOnChange = () => {
+    if (status === "error") {
+      setStatus("idle");
+      setErrorMsg("");
+    }
+  };
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">
@@ -135,20 +173,25 @@ export default function ContactForm({
         name="name"
         required
         placeholder="Your name"
+        onChange={clearErrorOnChange}
         className="w-full rounded-xl border border-neutral-300 px-4 py-3 text-sm"
       />
+
       <input
         name="email"
         type="email"
         required
         placeholder="Your email"
+        onChange={clearErrorOnChange}
         className="w-full rounded-xl border border-neutral-300 px-4 py-3 text-sm"
       />
+
       <textarea
         name="message"
         rows={4}
         required
         placeholder={messagePlaceholder}
+        onChange={clearErrorOnChange}
         className="w-full rounded-xl border border-neutral-300 px-4 py-3 text-sm"
       />
 
@@ -171,8 +214,14 @@ export default function ContactForm({
       {status === "success" && (
         <p className="text-sm text-green-700">Thanks — your message has been sent.</p>
       )}
+
       {status === "error" && (
-        <p className="text-sm text-red-700">Something went wrong. Please try again.</p>
+        <p className="text-sm text-red-700">
+          Something went wrong. Please try again.
+          {/* Uncomment for debugging:
+          <span className="block mt-1 text-xs text-red-600">{errorMsg}</span>
+          */}
+        </p>
       )}
     </form>
   );
