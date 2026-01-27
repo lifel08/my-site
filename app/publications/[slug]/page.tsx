@@ -4,8 +4,8 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import { getArticleSource } from "@/lib/content";
 import { YouTube } from "@/components/YouTube";
 
-const SITE_NAME = "Your Name"; // später anpassen
-const SITE_URL = "http://localhost:3000"; // später durch echte Domain ersetzen
+const SITE_NAME = "Lisa Fellinger"; 
+const SITE_URL = "https://lfellinger.com"; 
 
 export async function generateMetadata({
   params,

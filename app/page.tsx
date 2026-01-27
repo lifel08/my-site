@@ -3,21 +3,6 @@ import Link from "next/link";
 
 const ORANGE = "#ff6400";
 
-const primaryButtonStyle: React.CSSProperties = {
-  backgroundColor: ORANGE,
-  borderColor: ORANGE,
-  color: "#ffffff",
-  fill: ORANGE,
-};
-
-const primaryButtonHoverStyle: React.CSSProperties = {
-  backgroundColor: ORANGE,
-  borderColor: ORANGE,
-  color: "#ffffff",
-  fill: ORANGE,
-  opacity: 0.92,
-};
-
 function PrimaryButton({
   href,
   children,
@@ -30,10 +15,10 @@ function PrimaryButton({
       href={href}
       className="inline-flex items-center justify-center rounded-xl border px-5 py-3 text-sm font-semibold tracking-tight transition hover:opacity-90"
       style={{
-        backgroundColor: "#ff6400",
-        borderColor: "#ff6400",
+        backgroundColor: ORANGE,
+        borderColor: ORANGE,
         color: "#ffffff",
-        fill: "#FF6400",
+        fill: ORANGE,
       }}
     >
       {children}
@@ -60,7 +45,9 @@ function SecondaryLink({
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="text-2xl md:text-3xl font-semibold tracking-tight">{children}</h2>
+    <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
+      {children}
+    </h2>
   );
 }
 
@@ -74,7 +61,26 @@ function Card({
   return (
     <div className="rounded-2xl border border-neutral-200 bg-white p-6">
       <h3 className="text-xl font-semibold tracking-tight">{title}</h3>
-      <div className="mt-3 text-neutral-700 leading-relaxed">{children}</div>
+      <div className="mt-3 leading-relaxed text-neutral-700">{children}</div>
+    </div>
+  );
+}
+
+function FeatureCard({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="h-full rounded-2xl border border-neutral-200 bg-white p-5">
+      <div className="flex h-full flex-col">
+        <div className="text-sm font-semibold tracking-tight">{title}</div>
+        <div className="mt-1 text-sm leading-relaxed text-neutral-700">
+          {children}
+        </div>
+      </div>
     </div>
   );
 }
@@ -84,12 +90,12 @@ export default function HomePage() {
     <div className="space-y-16">
       {/* HERO */}
       <section className="grid gap-10 lg:grid-cols-12 lg:items-center">
-        <div className="lg:col-span-7 space-y-6">
+        <div className="space-y-6 lg:col-span-7">
           <header className="max-w-3xl space-y-4">
-            <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">
-              Web Analytics & SEO consulting for small and growing businesses
+            <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">
+              Web Analytics & SEO Consulting for small and growing businesses
             </h1>
-            <p className="text-base md:text-lg text-neutral-700 leading-relaxed">
+            <p className="text-base leading-relaxed text-neutral-700 md:text-lg">
               I help teams build reliable, privacy-aware measurement and turn complex data into
               clear insights stakeholders can act on.
             </p>
@@ -101,32 +107,39 @@ export default function HomePage() {
             <SecondaryLink href="/content">Explore my Publications</SecondaryLink>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-2xl border border-neutral-200 bg-white p-5">
-              <div className="text-sm font-semibold tracking-tight">10+ years</div>
-              <div className="mt-1 text-sm text-neutral-700">
-                Online marketing experience across analytics, SEO, and performance.
-              </div>
-            </div>
-            <div className="rounded-2xl border border-neutral-200 bg-white p-5">
-              <div className="text-sm font-semibold tracking-tight">Stakeholder clarity</div>
-              <div className="mt-1 text-sm text-neutral-700">
-                I simplify complex topics for different audiences—technical and non-technical.
-              </div>
-            </div>
-            <div className="rounded-2xl border border-neutral-200 bg-white p-5">
-              <div className="text-sm font-semibold tracking-tight">Reliable delivery</div>
-              <div className="mt-1 text-sm text-neutral-700">
-                Structured execution, QA, and documentation you can trust.
-              </div>
-            </div>
-            <div className="rounded-2xl border border-neutral-200 bg-white p-5">
-              <div className="text-sm font-semibold tracking-tight">Collaborative style</div>
-              <div className="mt-1 text-sm text-neutral-700">
-                Calm, respectful work in complex team settings—always on eye level.
-              </div>
-            </div>
-          </div>
+          {/* FEATURE GRID */}
+<div className="grid gap-4 sm:grid-cols-2 sm:grid-rows-2">
+  <div className="h-full rounded-2xl border border-neutral-200 bg-white p-5">
+    <div className="text-sm font-semibold tracking-tight">10+ years</div>
+    <div className="mt-1 text-sm leading-relaxed text-neutral-700">
+      Online marketing experience across analytics, SEO and performance marketing.
+    </div>
+  </div>
+
+  <div className="h-full rounded-2xl border border-neutral-200 bg-white p-5 sm:row-span-2">
+    <div className="text-sm font-semibold tracking-tight">Languages</div>
+    <div className="mt-1 text-sm leading-relaxed text-neutral-700">
+      <p>
+        I work confidently in multilingual environments and support international teams and projects. I also hold speaker assignments at events and conferences in these languages.
+      </p>
+      <ul className="mt-3 list-disc space-y-1 pl-6">
+        <li>
+          <strong>Fluent:</strong> German, English and French
+        </li>
+        <li>
+          <strong>Working knowledge:</strong> Spanish, Portuguese and Italian for comprehension and content work
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div className="h-full rounded-2xl border border-neutral-200 bg-white p-5">
+    <div className="text-sm font-semibold tracking-tight">Industries</div>
+    <div className="mt-1 text-sm leading-relaxed text-neutral-700">
+      Strong experience across consumer brands, eCommerce, B2B SaaS, lead-driven businesses and international non-profit organisations.
+    </div>
+  </div>
+</div>
         </div>
 
         {/* PHOTO */}
@@ -137,7 +150,7 @@ export default function HomePage() {
                 src="/images/lisa_fellinger.jpg"
                 alt="Lisa Fellinger"
                 fill
-                className="object-cover"
+                className="object-cover object-left"
                 priority
               />
             </div>
@@ -145,25 +158,21 @@ export default function HomePage() {
               Lisa Fellinger · Web Analytics & SEO Consulting
             </div>
           </div>
-          <div className="mt-3 text-xs text-neutral-500">
-            Tip: place your photo at <code className="rounded bg-neutral-100 px-1">public/images/lisa.jpg</code>
-          </div>
         </div>
       </section>
 
       {/* ABOUT */}
       <section className="max-w-3xl space-y-6">
         <SectionTitle>About</SectionTitle>
-        <div className="space-y-4 text-neutral-700 leading-relaxed">
+        <div className="space-y-4 leading-relaxed text-neutral-700">
           <p>
-            I’m Lisa, a freelance Web Analytics consultant specialising in reliable tracking and measurement architectures. 
-            I work hands-on across GA4, GTM, BigQuery and Looker Studio. Helping freelancers, startups and small to medium-sized businesses improve attribution, data quality and decision-making through clear, actionable insights.
+            I’m Lisa, a freelance Web Analytics consultant specialising in reliable tracking and measurement architectures.
+            I work hands-on across GA4, GTM, BigQuery and Looker Studio.
+            I help freelancers, startups and small to medium-sized businesses improve attribution, data quality and decision-making.
           </p>
           <p>
-            My strength is translating complex topics into practical next steps for different
-            stakeholders: marketing, product, leadership and technical teams. I’m known for
-            reliability, clear communication and creating a constructive working climate, especially
-            in complex team settings.
+            My strength is translating complex topics into practical next steps for different stakeholders such as marketing, product, leadership and technical teams.
+            I’m known for reliability, clear communication and a constructive working climate in complex team settings.
           </p>
         </div>
       </section>
@@ -173,16 +182,13 @@ export default function HomePage() {
         <SectionTitle>How I create impact</SectionTitle>
         <div className="grid gap-6 md:grid-cols-3">
           <Card title="Clarity for every stakeholder">
-            I break down complex analytics and SEO topics so that decision-makers, marketers and
-            technical teams share the same understanding and can move forward quickly.
+            I break down complex analytics and SEO topics so decision-makers, marketers and technical teams share the same understanding and can move forward quickly.
           </Card>
           <Card title="Dependable execution">
-            From setup to QA and documentation, I work with a structured approach so your tracking,
-            reporting and recommendations remain stable and maintainable over time.
+            From setup to QA and documentation, I work with a structured approach so your tracking, reporting and recommendations remain stable and maintainable over time.
           </Card>
           <Card title="Collaboration on eye level">
-            I value respectful communication and partnership. My goal is to enable your brand and team. Not to
-            create a black box.
+            I value respectful communication and partnership so your team stays enabled and the work stays transparent.
           </Card>
         </div>
       </section>
@@ -191,68 +197,56 @@ export default function HomePage() {
       <section className="space-y-6">
         <SectionTitle>Services</SectionTitle>
 
-        <div className="grid gap-6 md:grid-cols-2">
-          <div className="rounded-2xl border border-neutral-200 bg-white p-6">
-            <h3 className="text-xl font-semibold tracking-tight">Web Analytics</h3>
-            <p className="mt-3 text-neutral-700 leading-relaxed">
-              I help you build a reliable measurement foundation: privacy-aware, cleanly documented              and aligned with business goals.
-              and aligned with your business goals.
-            </p>
+<div className="grid gap-6 md:grid-cols-2">
+  <div className="flex h-full flex-col rounded-2xl border border-neutral-200 bg-white p-6">
+    <div>
+      <h3 className="text-xl font-semibold tracking-tight">Web Analytics</h3>
+      <p className="mt-3 leading-relaxed text-neutral-700">
+        I help you build a reliable measurement foundation that is privacy-aware, well documented and aligned with your business goals.
+      </p>
 
-            <ul className="mt-4 list-disc space-y-1 pl-6 text-neutral-700">
-              <li>Measurement plan & event taxonomy</li>
-              <li>GA4 + GTM setup and QA</li>
-              <li>Consent-aware tracking</li>
-              <li>Dashboards, reporting and insights</li>
-            </ul>
+      <ul className="mt-4 list-disc space-y-1 pl-6 text-neutral-700">
+        <li>Measurement plan and event taxonomy</li>
+        <li>GA4 and GTM setup and QA</li>
+        <li>Consent-aware tracking</li>
+        <li>Dashboards, reporting and insights</li>
+        <li>Employee training and enablement for Web Analytics best practices</li>
+      </ul>
+    </div>
 
-            <div className="mt-6">
-              <PrimaryButton href="/services/web-analytics">View Web Analytics</PrimaryButton>
-            </div>
-          </div>
+    <div className="mt-auto pt-6">
+      <PrimaryButton href="/services/web-analytics">View Web Analytics</PrimaryButton>
+    </div>
+  </div>
 
-          <div className="rounded-2xl border border-neutral-200 bg-white p-6">
-            <h3 className="text-xl font-semibold tracking-tight">SEO Consulting</h3>
-              <p className="mt-3 text-neutral-700 leading-relaxed">
-                I help organisations build sustainable SEO growth through clear strategy,
-                hands-on training and a tight integration between search optimisation and analytics.
-              </p>
+  <div className="flex h-full flex-col rounded-2xl border border-neutral-200 bg-white p-6">
+    <div>
+      <h3 className="text-xl font-semibold tracking-tight">SEO Consulting</h3>
+      <p className="mt-3 leading-relaxed text-neutral-700">
+        I help organisations build sustainable SEO growth through clear strategy, hands-on training and tight integration between search optimisation and analytics.
+      </p>
 
-              <ul className="mt-4 list-disc space-y-1 pl-6 text-neutral-700">
-                <li>SEO strategy definition and prioritised execution roadmap</li>
-                <li>Technical SEO audits translated into actionable business decisions</li>
-                <li>Search performance measurement and analytics-driven insights</li>
-                <li>Employee training and enablement for SEO best practices</li>
-              </ul>
+      <ul className="mt-4 list-disc space-y-1 pl-6 text-neutral-700">
+        <li>SEO strategy definition and prioritised execution roadmap</li>
+        <li>Technical SEO audits translated into actionable business decisions</li>
+        <li>Search performance measurement and analytics-driven insights</li>
+        <li>Employee training and enablement for SEO best practices</li>
+      </ul>
+    </div>
 
-            <div className="mt-6">
-              <PrimaryButton href="/services/seo-consulting">View SEO Consulting</PrimaryButton>
-            </div>
-          </div>
-        </div>
-      </section>
+    <div className="mt-auto pt-6">
+      <PrimaryButton href="/services/seo-consulting">View SEO Consulting</PrimaryButton>
+    </div>
+  </div>
+</div>
 
-      {/* LANGUAGES */}
-      <section className="max-w-3xl space-y-6">
-        <SectionTitle>Languages</SectionTitle>
-        <div className="space-y-3 text-neutral-700 leading-relaxed">
-          <p>
-            I work confidently in multilingual environments and can support international teams and
-            projects.
-          </p>
-          <ul className="list-disc pl-6 space-y-1">
-            <li><strong>Fluent:</strong> German, English, French</li>
-            <li><strong>Working knowledge:</strong> Spanish, Italian, Portuguese (comprehension and content work)</li>
-          </ul>
-        </div>
       </section>
 
       {/* CONTENT TEASER */}
       <section className="max-w-3xl space-y-6">
         <SectionTitle>Publications</SectionTitle>
-        <p className="text-neutral-700 leading-relaxed">
-         I publish practical insights on LinkedIn and sometimes in-depth articles on analytics, SEO and privacy-aware measurement. 
-         From time to time, I also share here personal reflections on freelancing and working remotely.
+        <p className="leading-relaxed text-neutral-700">
+          I publish practical insights on LinkedIn and sometimes in-depth articles on analytics, SEO and privacy-aware measurement.
         </p>
         <div>
           <SecondaryLink href="/content">Go to My Publications</SecondaryLink>

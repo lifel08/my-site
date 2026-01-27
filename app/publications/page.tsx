@@ -1,45 +1,53 @@
-import Link from "next/link";
-import { getAllArticles } from "@/lib/content";
+import { getAllArticles, getLinkedInPosts } from "@/lib/content";
+import { PublicationsClient } from "./PublicationsClient";
+
+type FeedItem =
+  | { type: "linkedin"; title: string; date: string; description?: string; url: string; image?: string }
+  | { type: "article"; title: string; date: string; description?: string; slug: string };
+
+function sortByDateDesc(items: FeedItem[]) {
+  return [...items].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+}
 
 export default function ContentHubPage() {
   const articles = getAllArticles();
+  const linkedIn = getLinkedInPosts();
+
+  const feed = sortByDateDesc([
+    ...linkedIn.map((p) => ({
+      type: "linkedin" as const,
+      title: p.title,
+      date: p.date,
+      description: p.description,
+      url: p.url,
+      image: (p as any).image as string | undefined,
+    })),
+    ...articles.map((a) => ({
+      type: "article" as const,
+      slug: a.slug,
+      title: a.title,
+      date: a.date,
+      description: a.description,
+    })),
+  ]);
+
+  const initial = feed.slice(0, 12);
 
   return (
     <div className="space-y-10">
       <header className="space-y-3">
         <h1 className="text-4xl font-semibold">Publications</h1>
-        <p className="text-lg text-neutral-700">
-          LinkedIn posts and longer articles.
-        </p>
+        <p className="text-lg text-neutral-700">Selected LinkedIn posts and longer articles.</p>
       </header>
 
-      <section className="rounded-2xl border p-6 space-y-3">
-        <h2 className="text-2xl font-semibold">LinkedIn</h2>
-        <ul className="list-disc pl-6 space-y-2 text-neutral-700">
-          <li>
-            <a className="underline" href="https://www.linkedin.com/" target="_blank" rel="noreferrer">
-              LinkedIn posts will appear here.
-            </a>
-          </li>
-        </ul>
-      </section>
-
       <section className="space-y-4">
-        <h2 className="text-2xl font-semibold">Articles</h2>
+        <h2 className="text-2xl font-semibold">Latest</h2>
 
-        <div className="grid gap-4">
-          {articles.map((a) => (
-            <article key={a.slug} className="rounded-2xl border p-6">
-              <div className="text-sm text-neutral-600">{a.date}</div>
-              <h3 className="mt-1 text-xl font-semibold">
-                <Link className="underline" href={`/publications/${a.slug}`}>
-                  {a.title}
-                </Link>
-              </h3>
-              {a.description ? <p className="mt-2 text-neutral-700">{a.description}</p> : null}
-            </article>
-          ))}
-        </div>
+        <PublicationsClient
+          initialItems={initial}
+          initialNextOffset={initial.length}
+          initialHasMore={initial.length < feed.length}
+        />
       </section>
     </div>
   );

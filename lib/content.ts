@@ -3,6 +3,7 @@ import path from "node:path";
 import matter from "gray-matter";
 
 const ARTICLES_DIR = path.join(process.cwd(), "publications", "articles");
+const LINKEDIN_FILE = path.join(process.cwd(), "publications", "linkedin.json");
 
 export type ArticleMeta = {
   slug: string;
@@ -53,4 +54,64 @@ console.log("Exists?", fs.existsSync(filePath));
     },
     mdx: content,
   };
+}
+
+export type LinkedInMeta = {
+  type: "linkedin";
+  title: string;
+  date: string; // ISO YYYY-MM-DD
+  description?: string;
+  url: string;
+  image?: string;
+};
+
+export function getLinkedInPosts(): LinkedInMeta[] {
+  if (!fs.existsSync(LINKEDIN_FILE)) return [];
+
+  const raw = fs.readFileSync(LINKEDIN_FILE, "utf8");
+  const data = JSON.parse(raw) as unknown;
+
+  if (!Array.isArray(data)) return [];
+
+  return data
+    .filter(
+      (x: any) =>
+        typeof x?.url === "string" &&
+        typeof x?.title === "string" &&
+        typeof x?.date === "string"
+    )
+    .map((x: any) => ({
+      type: "linkedin" as const,
+      title: String(x.title),
+      date: String(x.date),
+      description: x.description ? String(x.description) : undefined,
+      url: String(x.url),
+      image: x.image ? String(x.image) : undefined,
+    }))
+    .sort((a, b) => (a.date < b.date ? 1 : -1));
+}
+
+export type FeedItem =
+  | { type: "linkedin"; title: string; date: string; description?: string; url: string; image?: string }
+  | { type: "article"; title: string; date: string; description?: string; slug: string };
+
+export function getPublicationsFeed(): FeedItem[] {
+  const linkedIn = getLinkedInPosts().map((p) => ({
+    type: "linkedin" as const,
+    title: p.title,
+    date: p.date,
+    description: p.description,
+    url: p.url,
+    image: (p as any).image as string | undefined,
+  }));
+
+  const articles = getAllArticles().map((a) => ({
+    type: "article" as const,
+    slug: a.slug,
+    title: a.title,
+    date: a.date,
+    description: a.description,
+  }));
+
+  return [...linkedIn, ...articles].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
 }
