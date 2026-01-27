@@ -2,7 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 
-const ARTICLES_DIR = path.join(process.cwd(), "publications", "articles");
+// ✅ Flat structure: publications/*.mdx
+const PUBLICATIONS_DIR = path.join(process.cwd(), "publications");
 const LINKEDIN_FILE = path.join(process.cwd(), "publications", "linkedin.json");
 
 export type ArticleMeta = {
@@ -13,12 +14,23 @@ export type ArticleMeta = {
   youtubeId?: string;
 };
 
+function assertSafeSlug(slug: string) {
+  // Flat slugs only (no nested paths)
+  if (!slug || slug.includes("/") || slug.includes("\\") || slug.includes("..")) {
+    throw new Error("NOT_FOUND");
+  }
+}
+
 export function getAllArticles(): ArticleMeta[] {
-  const files = fs.readdirSync(ARTICLES_DIR).filter((f) => f.endsWith(".mdx"));
+  if (!fs.existsSync(PUBLICATIONS_DIR)) return [];
+
+  const files = fs
+    .readdirSync(PUBLICATIONS_DIR)
+    .filter((f) => f.endsWith(".mdx"));
 
   const articles = files.map((filename) => {
     const slug = filename.replace(/\.mdx$/, "");
-    const raw = fs.readFileSync(path.join(ARTICLES_DIR, filename), "utf8");
+    const raw = fs.readFileSync(path.join(PUBLICATIONS_DIR, filename), "utf8");
     const { data } = matter(raw);
 
     return {
@@ -30,14 +42,18 @@ export function getAllArticles(): ArticleMeta[] {
     };
   });
 
-  return articles.sort((a, b) => (a.date < b.date ? 1 : -1));
+  return articles.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
 }
 
 export function getArticleSource(slug: string): { meta: ArticleMeta; mdx: string } {
-  const filePath = path.join(ARTICLES_DIR, `${slug}.mdx`);
+  assertSafeSlug(slug);
+
+  const filePath = path.join(PUBLICATIONS_DIR, `${slug}.mdx`);
+
+  // Optional debug (remove later)
   console.log("Slug:", slug);
-console.log("Looking for:", filePath);
-console.log("Exists?", fs.existsSync(filePath));
+  console.log("Looking for:", filePath);
+  console.log("Exists?", fs.existsSync(filePath));
 
   if (!fs.existsSync(filePath)) throw new Error("NOT_FOUND");
 
@@ -88,12 +104,25 @@ export function getLinkedInPosts(): LinkedInMeta[] {
       url: String(x.url),
       image: x.image ? String(x.image) : undefined,
     }))
-    .sort((a, b) => (a.date < b.date ? 1 : -1));
+    .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
 }
 
 export type FeedItem =
-  | { type: "linkedin"; title: string; date: string; description?: string; url: string; image?: string }
-  | { type: "article"; title: string; date: string; description?: string; slug: string };
+  | {
+      type: "linkedin";
+      title: string;
+      date: string;
+      description?: string;
+      url: string;
+      image?: string;
+    }
+  | {
+      type: "article";
+      title: string;
+      date: string;
+      description?: string;
+      slug: string;
+    };
 
 export function getPublicationsFeed(): FeedItem[] {
   const linkedIn = getLinkedInPosts().map((p) => ({
@@ -102,7 +131,7 @@ export function getPublicationsFeed(): FeedItem[] {
     date: p.date,
     description: p.description,
     url: p.url,
-    image: (p as any).image as string | undefined,
+    image: p.image,
   }));
 
   const articles = getAllArticles().map((a) => ({
@@ -113,5 +142,7 @@ export function getPublicationsFeed(): FeedItem[] {
     description: a.description,
   }));
 
-  return [...linkedIn, ...articles].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+  return [...linkedIn, ...articles].sort((a, b) =>
+    a.date < b.date ? 1 : a.date > b.date ? -1 : 0
+  );
 }
