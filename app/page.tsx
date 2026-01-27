@@ -102,8 +102,8 @@ export default function HomePage() {
           </header>
 
           <div className="flex flex-wrap gap-3">
-            <PrimaryButton href="/services/web-analytics">Web Analytics</PrimaryButton>
-            <PrimaryButton href="/services/seo-consulting">SEO Consulting</PrimaryButton>
+            <PrimaryButton href="/web-analytics">Web Analytics</PrimaryButton>
+            <PrimaryButton href="/seo-consulting">SEO Consulting</PrimaryButton>
             <SecondaryLink href="/content">Explore my Publications</SecondaryLink>
           </div>
 
@@ -215,7 +215,7 @@ export default function HomePage() {
     </div>
 
     <div className="mt-auto pt-6">
-      <PrimaryButton href="/services/web-analytics">View Web Analytics</PrimaryButton>
+      <PrimaryButton href="/web-analytics">View Web Analytics</PrimaryButton>
     </div>
   </div>
 
@@ -235,7 +235,7 @@ export default function HomePage() {
     </div>
 
     <div className="mt-auto pt-6">
-      <PrimaryButton href="/services/seo-consulting">View SEO Consulting</PrimaryButton>
+      <PrimaryButton href="/seo-consulting">View SEO Consulting</PrimaryButton>
     </div>
   </div>
 </div>

@@ -34,13 +34,13 @@ export default function RootLayout({
             <div className="flex items-center gap-6 text-sm text-neutral-700">
               <Link
                 className="hover:text-neutral-900"
-                href="/services/web-analytics"
+                href="/web-analytics"
               >
                 Web Analytics
               </Link>
               <Link
                 className="hover:text-neutral-900"
-                href="/services/seo-consulting"
+                href="/seo-consulting"
               >
                 SEO Consulting
               </Link>
