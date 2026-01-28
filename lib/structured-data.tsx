@@ -22,7 +22,6 @@ export function jsonLdPerson() {
       "Looker Studio",
       "Server-side tagging",
     ],
-    areaServed: ["Germany", "Europe", "Remote"],
   };
 }
 
@@ -80,6 +79,7 @@ export function jsonLdService(input: {
       name: site.name,
       url: site.domain,
     },
+    areaServed: ["Germany", "Europe", "Remote"],
   };
 }
 

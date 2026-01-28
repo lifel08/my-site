@@ -5,6 +5,9 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Lisa Fellinger | Web Analytics, Tracking & SEO Measurement",
   description: "Web analytics and SEO consulting focused on reliable tracking and clean data. Hands-on GA4 and GTM setups that support real business decisions.",
+  alternates: {
+    canonical: "https://lfellinger.com/",
+  },
   icons: {
     icon: [
       { url: "/favicon.svg", type: "image/svg+xml" },
