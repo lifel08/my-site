@@ -31,6 +31,28 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* --- Google Consent Mode v2 (Advanced) DEFAULTS: must run BEFORE GTM --- */}
+        <Script
+          id="consent-mode-default"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+
+              // Advanced Consent Mode: allow tags to load, but default everything to denied
+              gtag('consent', 'default', {
+                analytics_storage: 'denied',
+                ad_storage: 'denied',
+                ad_user_data: 'denied',
+                ad_personalization: 'denied',
+                // Small delay so CMP can update quickly before tags act on default
+                wait_for_update: 500
+              });
+            `,
+          }}
+        />
+
         {/* Usercentrics Autoblocker */}
         <Script
           id="usercentrics-autoblocker"
@@ -46,7 +68,7 @@ export default function RootLayout({
           strategy="beforeInteractive"
         />
 
-        {/* Google Tag Manager (container only; will be governed by consent next) */}
+        {/* Google Tag Manager (container only; governed by consent) */}
         <Script
           id="gtm"
           strategy="afterInteractive"
