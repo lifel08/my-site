@@ -3,9 +3,9 @@ import ContactForm from "@/components/ContactForm";
 import { buildMetadata } from "@/lib/seo";
 import { JsonLd, jsonLdBreadcrumb, jsonLdService } from "@/lib/structured-data";
 
-const title = "Web Analytics Consulting | Lisa Fellinger";
+const title = "Web Analytics Consulting | Tracking, Measurement & Data Quality";
 const description =
-  "GA4, GTM and measurement strategy for B2B teams: clean tracking, reliable reporting, and actionable insights.";
+  "Structured web analytics consulting for  multi-market setups, privacy-aware tracking and relaunches. Hands-on GA4 and GTM implementation with strong focus on data quality and documentation.";
 
 export const metadata = buildMetadata({
   title,

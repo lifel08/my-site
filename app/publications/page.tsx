@@ -19,8 +19,8 @@ function sortByDateDesc(items: FeedItem[]) {
   return [...items].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
 }
 
-const title = "Publications | Lisa Fellinger";
-const description = "Selected LinkedIn posts and longer articles on web analytics and SEO.";
+const title = "Publications | Practical Insights on Web Analytics, SEO & Measurement – Lisa Fellinger";
+const description = "Selected LinkedIn posts and articles on web analytics, SEO and measurement with a focus on practical application and clear explanations.";
 
 export const metadata = buildMetadata({
   title,
@@ -66,7 +66,7 @@ export default function ContentHubPage() {
       <div className="space-y-10">
         <header className="space-y-3">
           <h1 className="text-4xl font-semibold">Publications</h1>
-          <p className="text-lg text-neutral-700">Selected LinkedIn posts and longer articles.</p>
+          <p className="text-lg text-neutral-700">Selected LinkedIn posts and articles.</p>
         </header>
 
         <section className="space-y-4">

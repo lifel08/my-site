@@ -3,9 +3,9 @@ import ContactForm from "@/components/ContactForm";
 import { buildMetadata } from "@/lib/seo";
 import { JsonLd, jsonLdBreadcrumb, jsonLdService } from "@/lib/structured-data";
 
-const title = "SEO Consulting | Lisa Fellinger";
+const title = "SEO Consulting & Training | Strategy, Audits & Enablement";
 const description =
-  "SEO strategy, audits and team enablement: clear priorities, practical roadmaps and measurable progress.";
+  "SEO consulting and training focused on clear strategy, structured audits and measurable search performance. Practical, analytics-driven SEO explained so teams can apply it independently.";
 
 export const metadata = buildMetadata({
   title,
@@ -129,9 +129,7 @@ export default function SEOConsultingPage() {
         <section className="max-w-3xl space-y-4">
           <blockquote className="rounded-2xl border border-neutral-200 bg-white p-6">
             <p className="text-neutral-800 leading-relaxed italic">
-              “Lisa combined deep SEO expertise with a highly structured and independent way of
-              working. She supported teams through clear prioritisation, strong communication and a
-              very collaborative leadership style.”
+              “With extensive SEO expertise and a strong didactic approach, Lisa successfully translates complex SEO concepts into clear, practical learning formats that teams can apply independently.”
             </p>
             <footer className="mt-3 text-sm text-neutral-600">
               — Reference from agency leadership, SEO consulting

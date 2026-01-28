@@ -7,6 +7,9 @@ export const site = {
   locale: "en_GB",
   twitterHandle: undefined as string | undefined, // optional: "@..."
   defaultOgImage: "/og/default.jpg", // 1200x630
+  sameAs: [
+     "https://www.linkedin.com/in/lifel/",
+  ] as string[],
 };
 
 export function absoluteUrl(path: string) {
@@ -45,7 +48,6 @@ export function buildMetadata({
     robots: {
       index,
       follow,
-      // optional hardening:
       googleBot: {
         index,
         follow,

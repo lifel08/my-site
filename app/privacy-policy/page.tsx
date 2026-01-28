@@ -4,7 +4,7 @@ import { JsonLd, jsonLdBreadcrumb } from "@/lib/structured-data";
 
 const title = "Privacy Policy | Lisa Fellinger";
 const description =
-  "Information about data processing, cookies, consent management, and your rights under the GDPR.";
+  "Information about data processing, cookies, consent management and your rights under the GDPR.";
 
 export const metadata = buildMetadata({
   title,
