@@ -20,18 +20,17 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+const UC_RULESET_ID = "nzA5dDjdnKUHRF";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
-        {/* Usercentrics Autoblocker (must load early) */}
+        {/* Usercentrics Autoblocker */}
         <Script
           id="usercentrics-autoblocker"
           src="https://web.cmp.usercentrics.eu/modules/autoblocker.js"
+          data-ruleset-id={UC_RULESET_ID}
           strategy="beforeInteractive"
         />
 
@@ -39,14 +38,12 @@ export default function RootLayout({
         <Script
           id="usercentrics-cmp"
           src="https://web.cmp.usercentrics.eu/ui/loader.js"
-          data-ruleset-id="nzA5dDjdnKUHRF"
+          data-ruleset-id={UC_RULESET_ID}
           strategy="beforeInteractive"
         />
       </head>
 
-      {/* LinkedIn-like page background */}
       <body className="min-h-screen bg-[#F4F2EE] text-neutral-900">
-        {/* Keep header white like LinkedIn top bar */}
         <header className="border-b border-neutral-200 bg-white">
           <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
             <Link href="/" className="font-semibold tracking-tight">
@@ -69,7 +66,6 @@ export default function RootLayout({
 
         <main className="mx-auto max-w-6xl px-6 py-12">{children}</main>
 
-        {/* Keep footer white for a clean base */}
         <footer className="mt-24 border-t border-neutral-200 bg-white">
           <div className="mx-auto max-w-6xl px-6 py-8 text-sm text-neutral-600 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>© {new Date().getFullYear()} Lisa Fellinger</div>
