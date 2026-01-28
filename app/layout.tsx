@@ -20,9 +20,13 @@ export const metadata: Metadata = {
   },
 };
 
-const UC_RULESET_ID = "nzA5dDjdnKUHRF";
+const UC_SETTINGS_ID = "nzA5dDjdnKUHRF";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
       <head>
@@ -30,7 +34,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Script
           id="usercentrics-autoblocker"
           src="https://web.cmp.usercentrics.eu/modules/autoblocker.js"
-          data-ruleset-id={UC_RULESET_ID}
           strategy="beforeInteractive"
         />
 
@@ -38,7 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Script
           id="usercentrics-cmp"
           src="https://web.cmp.usercentrics.eu/ui/loader.js"
-          data-ruleset-id={UC_RULESET_ID}
+          data-settings-id={UC_SETTINGS_ID}
           strategy="beforeInteractive"
         />
       </head>
