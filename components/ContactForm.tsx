@@ -61,8 +61,8 @@ function pushGa4Event(payload: {
   eventName: string;
   eventType: string;
   eventLabel?: string;
-  eventParameter2?: string;
-  fieldValue2?: string;
+  eventParameter1?: string;
+  fieldValue1?: string;
   email_hashed?: string;
 }) {
   if (typeof window === "undefined") return;
@@ -229,8 +229,8 @@ export default function ContactForm({
           pushGa4Event({
             eventName: "lead",
             eventType: "kontakt",
-            eventParameter2: "UserPseudoID",
-            fieldValue2: getGaUserPseudoId(),
+            eventParameter1: "UserPseudoID",
+            fieldValue1: getGaUserPseudoId(),
             email_hashed,
           });
         }
