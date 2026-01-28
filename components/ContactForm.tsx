@@ -1,6 +1,6 @@
 "use client";
 
-console.log("CONTACTFORM_VERSION = 2026-01-26-tokenref-sync-v2-formel");
+console.log("CONTACTFORM_VERSION = 2026-01-28-ga4-datalayer-v3-lead-emailhash");
 
 import { useEffect, useRef, useState } from "react";
 
@@ -11,6 +11,7 @@ declare global {
       reset?: (widgetId?: string) => void;
       remove?: (widgetId: string) => void;
     } | null;
+    dataLayer?: Array<Record<string, any>>;
   }
 }
 
@@ -20,6 +21,57 @@ type ContactFormProps = {
 };
 
 type Status = "idle" | "sending" | "success" | "error";
+
+/* ------------------------------------------------------------------ */
+/* GA cookie -> user_pseudo_id                                         */
+/* _ga: GA1.1.895746381.1769617592 -> "895746381.1769617592"          */
+/* ------------------------------------------------------------------ */
+function getGaUserPseudoId(): string | undefined {
+  if (typeof document === "undefined") return;
+
+  const gaRow = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("_ga="));
+
+  if (!gaRow) return;
+
+  const gaValue = gaRow.substring("_ga=".length); // "GA1.1.895746381.1769617592"
+  const parts = gaValue.split(".");
+  if (parts.length < 4) return;
+
+  return `${parts[2]}.${parts[3]}`;
+}
+
+/* ------------------------------------------------------------------ */
+/* SHA-256 hash (lowercase + trimmed) for email                        */
+/* ------------------------------------------------------------------ */
+async function sha256(value: string): Promise<string> {
+  const normalized = value.trim().toLowerCase();
+  const data = new TextEncoder().encode(normalized);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+/* ------------------------------------------------------------------ */
+/* GTM dataLayer push in your desired schema                           */
+/* event is ALWAYS "ga4Event"                                          */
+/* ------------------------------------------------------------------ */
+function pushGa4Event(payload: {
+  eventName: string;
+  eventType: string;
+  eventLabel?: string;
+  eventParameter2?: string;
+  fieldValue2?: string;
+  email_hashed?: string;
+}) {
+  if (typeof window === "undefined") return;
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({
+    event: "ga4Event",
+    ...payload,
+  });
+}
 
 export default function ContactForm({
   messagePlaceholder = "Briefly describe your project or question",
@@ -32,6 +84,9 @@ export default function ContactForm({
 
   // Prevent double submit
   const inFlightRef = useRef(false);
+
+  // Prevent duplicate "lead" event per successful submit
+  const leadSentRef = useRef(false);
 
   // Token state + ref (kept in sync synchronously)
   const [token, setToken] = useState("");
@@ -136,6 +191,7 @@ export default function ContactForm({
     setErrorMsg("");
 
     const fd = new FormData(formEl);
+
     const payload = {
       name: String(fd.get("name") ?? "").trim(),
       email: String(fd.get("email") ?? "").trim(),
@@ -161,15 +217,30 @@ export default function ContactForm({
 
       if (res.ok && (json?.ok === true || json === null)) {
         setStatus("success");
+
+        // Fire GA4 wrapper event -> GTM trigger: Custom Event "ga4Event"
+        // -> GA4 event name comes from eventName ("lead")
+        if (!leadSentRef.current) {
+          leadSentRef.current = true;
+
+          const email = String(fd.get("email") ?? "").trim();
+          const email_hashed = email ? await sha256(email) : undefined;
+
+          pushGa4Event({
+            eventName: "lead",
+            eventType: "kontakt",
+            eventParameter2: "UserPseudoID",
+            fieldValue2: getGaUserPseudoId(),
+            email_hashed,
+          });
+        }
+
         formEl.reset(); // SAFE
         hardResetWidget();
         return;
       }
 
-      const msg =
-        json?.error ??
-        json?.message ??
-        "Request failed.";
+      const msg = json?.error ?? json?.message ?? "Request failed.";
       setErrorMsg(String(msg));
       setStatus("error");
       hardResetWidget();
@@ -205,7 +276,11 @@ export default function ContactForm({
         name="name"
         required
         placeholder="Your name"
-        onChange={clearErrorOnChange}
+        onChange={() => {
+          clearErrorOnChange();
+          // allow a new lead after user edits + re-sends
+          if (status === "success") leadSentRef.current = false;
+        }}
         className="w-full rounded-xl border border-neutral-300 px-4 py-3 text-sm"
       />
 
@@ -214,7 +289,10 @@ export default function ContactForm({
         type="email"
         required
         placeholder="Your email"
-        onChange={clearErrorOnChange}
+        onChange={() => {
+          clearErrorOnChange();
+          if (status === "success") leadSentRef.current = false;
+        }}
         className="w-full rounded-xl border border-neutral-300 px-4 py-3 text-sm"
       />
 
@@ -223,7 +301,10 @@ export default function ContactForm({
         rows={4}
         required
         placeholder={messagePlaceholder}
-        onChange={clearErrorOnChange}
+        onChange={() => {
+          clearErrorOnChange();
+          if (status === "success") leadSentRef.current = false;
+        }}
         className="w-full rounded-xl border border-neutral-300 px-4 py-3 text-sm"
       />
 
@@ -238,6 +319,15 @@ export default function ContactForm({
       <button
         type="submit"
         disabled={sendDisabled}
+        onClick={() => {
+          if (sendDisabled) return;
+
+          pushGa4Event({
+            eventName: "button_click",
+            eventType: "kontakt",
+            eventLabel: "send_message",
+          });
+        }}
         className={`inline-flex rounded-xl bg-[#ff6400] px-5 py-3 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 ${
           status === "sending" ? "pointer-events-none" : ""
         }`}
