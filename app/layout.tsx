@@ -21,6 +21,7 @@ export const metadata: Metadata = {
 };
 
 const UC_SETTINGS_ID = "nzA5dDjdnKUHRF";
+const GTM_ID = "GTM-N7MRKHQZ";
 
 export default function RootLayout({
   children,
@@ -44,9 +45,35 @@ export default function RootLayout({
           data-settings-id={UC_SETTINGS_ID}
           strategy="beforeInteractive"
         />
+
+        {/* Google Tag Manager (container only; will be governed by consent next) */}
+        <Script
+          id="gtm"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+              new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+              j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+              'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+              })(window,document,'script','dataLayer','${GTM_ID}');
+            `,
+          }}
+        />
       </head>
 
       <body className="min-h-screen bg-[#F4F2EE] text-neutral-900">
+        {/* GTM (noscript) */}
+        <noscript>
+          <iframe
+            src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          />
+        </noscript>
+
+        {/* Keep header white like LinkedIn top bar */}
         <header className="border-b border-neutral-200 bg-white">
           <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
             <Link href="/" className="font-semibold tracking-tight">
