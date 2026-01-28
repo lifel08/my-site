@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Script from "next/script";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Lisa Fellinger | Web Analytics, Tracking & SEO Measurement",
-  description: "Web analytics and SEO consulting focused on reliable tracking and clean data. Hands-on GA4 and GTM setups that support real business decisions.",
+  description:
+    "Web analytics and SEO consulting focused on reliable tracking and clean data. Hands-on GA4 and GTM setups that support real business decisions.",
   alternates: {
     canonical: "https://lfellinger.com/",
   },
@@ -25,6 +27,23 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        {/* Usercentrics Autoblocker (must load early) */}
+        <Script
+          id="usercentrics-autoblocker"
+          src="https://web.cmp.usercentrics.eu/modules/autoblocker.js"
+          strategy="beforeInteractive"
+        />
+
+        {/* Usercentrics CMP UI */}
+        <Script
+          id="usercentrics-cmp"
+          src="https://web.cmp.usercentrics.eu/ui/loader.js"
+          data-ruleset-id="nzA5dDjdnKUHRF"
+          strategy="beforeInteractive"
+        />
+      </head>
+
       {/* LinkedIn-like page background */}
       <body className="min-h-screen bg-[#F4F2EE] text-neutral-900">
         {/* Keep header white like LinkedIn top bar */}
@@ -35,31 +54,20 @@ export default function RootLayout({
             </Link>
 
             <div className="flex items-center gap-6 text-sm text-neutral-700">
-              <Link
-                className="hover:text-neutral-900"
-                href="/web-analytics"
-              >
+              <Link className="hover:text-neutral-900" href="/web-analytics">
                 Web Analytics
               </Link>
-              <Link
-                className="hover:text-neutral-900"
-                href="/seo-consulting"
-              >
+              <Link className="hover:text-neutral-900" href="/seo-consulting">
                 SEO Consulting
               </Link>
-              <Link
-                className="hover:text-neutral-900"
-                href="/publications"
-              >
+              <Link className="hover:text-neutral-900" href="/publications">
                 Publications
               </Link>
             </div>
           </nav>
         </header>
 
-        <main className="mx-auto max-w-6xl px-6 py-12">
-          {children}
-        </main>
+        <main className="mx-auto max-w-6xl px-6 py-12">{children}</main>
 
         {/* Keep footer white for a clean base */}
         <footer className="mt-24 border-t border-neutral-200 bg-white">
