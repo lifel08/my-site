@@ -23,11 +23,16 @@ export const metadata: Metadata = {
 const UC_SETTINGS_ID = "nzA5dDjdnKUHRF";
 const GTM_ID = "GTM-N7MRKHQZ";
 
+type CMPMode = "USERCENTRICS" | "COOKIEBOT" | "NONE";
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const cmp = (process.env.NEXT_PUBLIC_CMP || "USERCENTRICS") as CMPMode;
+  const cookiebotCbid = process.env.NEXT_PUBLIC_COOKIEBOT_CBID || "";
+
   return (
     <html lang="en">
       <head>
@@ -46,29 +51,44 @@ export default function RootLayout({
                 ad_storage: 'denied',
                 ad_user_data: 'denied',
                 ad_personalization: 'denied',
-                // Small delay so CMP can update quickly before tags act on default
                 wait_for_update: 500
               });
             `,
           }}
         />
 
-        {/* Usercentrics Autoblocker */}
-        <Script
-          id="usercentrics-autoblocker"
-          src="https://web.cmp.usercentrics.eu/modules/autoblocker.js"
-          strategy="beforeInteractive"
-        />
+        {/* --- CMP SWITCH: load exactly ONE CMP --- */}
+        {cmp === "USERCENTRICS" && (
+          <>
+            {/* Usercentrics Autoblocker */}
+            <Script
+              id="usercentrics-autoblocker"
+              src="https://web.cmp.usercentrics.eu/modules/autoblocker.js"
+              strategy="beforeInteractive"
+            />
 
-        {/* Usercentrics CMP UI */}
-        <Script
-          id="usercentrics-cmp"
-          src="https://web.cmp.usercentrics.eu/ui/loader.js"
-          data-settings-id={UC_SETTINGS_ID}
-          strategy="beforeInteractive"
-        />
+            {/* Usercentrics CMP UI */}
+            <Script
+              id="usercentrics-cmp"
+              src="https://web.cmp.usercentrics.eu/ui/loader.js"
+              data-settings-id={UC_SETTINGS_ID}
+              strategy="beforeInteractive"
+            />
+          </>
+        )}
 
-        {/* Google Tag Manager (container only; governed by consent) */}
+        {cmp === "COOKIEBOT" && cookiebotCbid && (
+          <Script
+            id="Cookiebot"
+            src="https://consent.cookiebot.com/uc.js"
+            data-cbid={cookiebotCbid}
+            data-blockingmode="auto"
+            type="text/javascript"
+            strategy="beforeInteractive"
+          />
+        )}
+
+        {/* Google Tag Manager */}
         <Script
           id="gtm"
           strategy="afterInteractive"
@@ -95,7 +115,6 @@ export default function RootLayout({
           />
         </noscript>
 
-        {/* Keep header white like LinkedIn top bar */}
         <header className="border-b border-neutral-200 bg-white">
           <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
             <Link href="/" className="font-semibold tracking-tight">
