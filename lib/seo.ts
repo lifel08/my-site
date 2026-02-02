@@ -6,7 +6,7 @@ export const site = {
   domain: "https://lfellinger.com",
   locale: "en_GB",
   twitterHandle: undefined as string | undefined, // optional: "@..."
-  defaultOgImage: "/og/default.jpg", // 1200x630
+  defaultOgImage: "images/og-image.png", // 1200x630
   sameAs: [
      "https://www.linkedin.com/in/lifel/",
   ] as string[],
