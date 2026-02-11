@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
   title: "Lisa Fellinger | Web Analytics, Tracking & SEO Measurement",
   description:
-    "Web analytics and SEO Consulting focused on setups and training that support real business decisions.",
+    "Web analytics and SEO Measurement focused on setups and training that support real business decisions.",
 
   alternates: {
     canonical: "https://lfellinger.com/",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     siteName: "Lisa Fellinger",
     title: "Lisa Fellinger | Web Analytics, Tracking & SEO Measurement",
     description:
-      "Web analytics and SEO Consulting focused on setups and training that support real business decisions.",
+      "Web analytics and SEO Measurement focused on setups and training that support real business decisions.",
     images: [
       {
         url: "/images/og-image.png",
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Lisa Fellinger | Web Analytics, Tracking & SEO Measurement",
     description:
-      "Web analytics and SEO Consulting focused on setups and training that support real business decisions.",
+      "Web analytics and SEO Measurement focused on setups and training that support real business decisions.",
     images: ["/images/og-image.png"],
   },
 };
