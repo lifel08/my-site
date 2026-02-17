@@ -1,9 +1,16 @@
-[   {
+[  {
+    "title": "I Built My Own Admin System in Google Sheets (and 'yes', I know it won't scale forever)",
+    "date": "2026-02-17",
+    "description": "As an incoming freelancer, I was looking for a small, simple admin setup.",
+    "url": "https://www.linkedin.com/posts/lifel_freelancing-automation-googlesheets-activity-7429434834625769472-_AFT",
+    "image": "/images/linkedin/2026-02-17-google-sheet-freelance-automation.jpg"
+  },  
+   {
     "title": "Freelancing is a mindset shift: in how you think about money",
     "date": "2026-02-13",
     "description": "When people talk about freelancing, they often focus on flexibility, freedom or working on your own terms.",
     "url": "https://www.linkedin.com/posts/lifel_freelancing-selfemployment-finance-activity-7428061154024783872-tOc7",
-    "image": "/images/linkedin/2026-02-13-enterprise_demography_eu_2023.jpg"
+    "image": "/images/linkedin/2026-02-13-enterprise-demography-eu-2023.jpg"
   },     
     {
     "title": "Why SEO and analytics are still surprisingly disconnected in day-to-day web analytics work even though they’re closely related in theory",
