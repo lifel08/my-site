@@ -162,6 +162,7 @@ export default function HomePage() {
                   src="/images/lisa_fellinger.jpg"
                   alt="Lisa Fellinger"
                   fill
+                  sizes="(max-width: 1024px) 100vw, 42vw"
                   className="object-cover object-left"
                   priority
                 />
