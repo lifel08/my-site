@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Script from "next/script";
+import { headers } from "next/headers";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -54,11 +55,13 @@ const GTM_ID = "GTM-N7MRKHQZ";
 
 type CMPMode = "USERCENTRICS" | "COOKIEBOT" | "NONE";
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const headerStore = await headers();
+  const nonce = headerStore.get("x-nonce") ?? undefined;
   const cmp = (process.env.NEXT_PUBLIC_CMP || "USERCENTRICS") as CMPMode;
   const cookiebotCbid = process.env.NEXT_PUBLIC_COOKIEBOT_CBID || "";
 
@@ -68,6 +71,7 @@ export default function RootLayout({
         {/* --- Google Consent Mode v2 (Advanced) DEFAULTS: must run BEFORE GTM --- */}
         <Script
           id="consent-mode-default"
+          nonce={nonce}
           strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `
@@ -92,6 +96,7 @@ export default function RootLayout({
             {/* Usercentrics Autoblocker */}
             <Script
               id="usercentrics-autoblocker"
+              nonce={nonce}
               src="https://web.cmp.usercentrics.eu/modules/autoblocker.js"
               strategy="beforeInteractive"
             />
@@ -99,6 +104,7 @@ export default function RootLayout({
             {/* Usercentrics CMP UI */}
             <Script
               id="usercentrics-cmp"
+              nonce={nonce}
               src="https://web.cmp.usercentrics.eu/ui/loader.js"
               data-settings-id={UC_SETTINGS_ID}
               strategy="beforeInteractive"
@@ -109,6 +115,7 @@ export default function RootLayout({
         {cmp === "COOKIEBOT" && cookiebotCbid && (
           <Script
             id="Cookiebot"
+            nonce={nonce}
             src="https://consent.cookiebot.com/uc.js"
             data-cbid={cookiebotCbid}
             data-blockingmode="auto"
@@ -120,6 +127,7 @@ export default function RootLayout({
         {/* Google Tag Manager */}
         <Script
           id="gtm"
+          nonce={nonce}
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
