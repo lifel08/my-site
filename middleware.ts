@@ -2,15 +2,17 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-function base64Nonce(bytes = 16) {
-  const arr = new Uint8Array(bytes);
-  crypto.getRandomValues(arr);
-  // Base64 (URL-safe ist nicht nötig für nonce, normal base64 reicht)
-  return Buffer.from(arr).toString("base64");
+function createNonce(size = 16) {
+  const bytes = new Uint8Array(size);
+  crypto.getRandomValues(bytes);
+  // Base64 in Edge Runtime (ohne Buffer)
+  let binary = "";
+  for (const b of bytes) binary += String.fromCharCode(b);
+  return btoa(binary);
 }
 
 export function middleware(req: NextRequest) {
-  const nonce = base64Nonce();
+  const nonce = createNonce();
 
   const csp = `
     default-src 'self';
@@ -20,6 +22,17 @@ export function middleware(req: NextRequest) {
     script-src 'self' 'nonce-${nonce}'
       https://challenges.cloudflare.com
       https://consent.cookiebot.com
+      https://consentcdn.cookiebot.com
+      https://cdn.cookiebot.com
+      https://*.usercentrics.eu
+      https://app.usercentrics.eu
+      https://www.googletagmanager.com
+      https://www.google-analytics.com;
+
+    script-src-elem 'self' 'nonce-${nonce}'
+      https://challenges.cloudflare.com
+      https://consent.cookiebot.com
+      https://consentcdn.cookiebot.com
       https://cdn.cookiebot.com
       https://*.usercentrics.eu
       https://app.usercentrics.eu
@@ -34,14 +47,17 @@ export function middleware(req: NextRequest) {
       https://www.google-analytics.com
       https://region1.google-analytics.com
       https://stats.g.doubleclick.net
-      https://*.cookiebot.com
       https://consent.cookiebot.com
+      https://consentcdn.cookiebot.com
+      https://*.cookiebot.com
       https://*.usercentrics.eu;
 
-    frame-src https://challenges.cloudflare.com;
+    frame-src
+      https://challenges.cloudflare.com
+      https://consentcdn.cookiebot.com;
   `.replace(/\s{2,}/g, " ").trim();
 
-  // Nonce ins Request-Header schreiben, damit du ihn im App Router auslesen kannst
+  // Nonce an den Request weiterreichen, damit app/layout.tsx ihn auslesen kann
   const requestHeaders = new Headers(req.headers);
   requestHeaders.set("x-nonce", nonce);
 
@@ -53,12 +69,6 @@ export function middleware(req: NextRequest) {
   return res;
 }
 
-// Optional: bestimmte Pfade ausschließen
 export const config = {
-  matcher: [
-    /*
-      Nicht auf Next-internals/static Assets anwenden:
-    */
-    "/((?!_next/static|_next/image|favicon.ico).*)",
-  ],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
