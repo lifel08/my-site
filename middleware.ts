@@ -41,10 +41,12 @@ export function middleware(req: NextRequest) {
       https://www.google-analytics.com;
 
     style-src 'self' 'unsafe-inline';
-    style-src-elem 'self' 'unsafe-inline';
+    style-src-elem 'self' 'unsafe-inline'
+    https://www.googletagmanager.com
+    https://fonts.googleapis.com;
 
     img-src 'self' data: blob: https:;
-    font-src 'self' data: https:;
+    font-src 'self' data: https://fonts.gstatic.com;
 
     connect-src 'self'
       https://www.googletagmanager.com
