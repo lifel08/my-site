@@ -1,12 +1,9 @@
-// middleware.ts
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 function createNonce(size = 16) {
   const bytes = new Uint8Array(size);
   crypto.getRandomValues(bytes);
-
-  // Base64 (Edge Runtime kompatibel, ohne Buffer)
   let binary = "";
   for (const b of bytes) binary += String.fromCharCode(b);
   return btoa(binary);
@@ -40,10 +37,8 @@ export function middleware(req: NextRequest) {
       https://www.googletagmanager.com
       https://www.google-analytics.com;
 
-    style-src 'self' 'unsafe-inline';
-    style-src-elem 'self' 'unsafe-inline'
-    https://www.googletagmanager.com
-    https://fonts.googleapis.com;
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    style-src-elem 'self' 'unsafe-inline' https://www.googletagmanager.com https://fonts.googleapis.com;
 
     img-src 'self' data: blob: https:;
     font-src 'self' data: https://fonts.gstatic.com;
@@ -67,7 +62,6 @@ export function middleware(req: NextRequest) {
       https://data.lfellinger.com;
   `.replace(/\s{2,}/g, " ").trim();
 
-  // Nonce in Request-Header weiterreichen (für app/layout.tsx)
   const requestHeaders = new Headers(req.headers);
   requestHeaders.set("x-nonce", nonce);
 
