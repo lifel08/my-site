@@ -5,7 +5,8 @@ import type { NextRequest } from "next/server";
 function createNonce(size = 16) {
   const bytes = new Uint8Array(size);
   crypto.getRandomValues(bytes);
-  // Base64 in Edge Runtime (ohne Buffer)
+
+  // Base64 (Edge Runtime kompatibel, ohne Buffer)
   let binary = "";
   for (const b of bytes) binary += String.fromCharCode(b);
   return btoa(binary);
@@ -40,24 +41,31 @@ export function middleware(req: NextRequest) {
       https://www.google-analytics.com;
 
     style-src 'self' 'unsafe-inline';
+    style-src-elem 'self' 'unsafe-inline';
+
     img-src 'self' data: blob: https:;
     font-src 'self' data: https:;
 
     connect-src 'self'
+      https://www.googletagmanager.com
       https://www.google-analytics.com
       https://region1.google-analytics.com
       https://stats.g.doubleclick.net
       https://consent.cookiebot.com
       https://consentcdn.cookiebot.com
       https://*.cookiebot.com
-      https://*.usercentrics.eu;
+      https://*.usercentrics.eu
+      https://data.lfellinger.com;
 
     frame-src
       https://challenges.cloudflare.com
-      https://consentcdn.cookiebot.com;
+      https://consentcdn.cookiebot.com
+      https://www.googletagmanager.com
+      https://tagassistant.google.com
+      https://data.lfellinger.com;
   `.replace(/\s{2,}/g, " ").trim();
 
-  // Nonce an den Request weiterreichen, damit app/layout.tsx ihn auslesen kann
+  // Nonce in Request-Header weiterreichen (für app/layout.tsx)
   const requestHeaders = new Headers(req.headers);
   requestHeaders.set("x-nonce", nonce);
 
