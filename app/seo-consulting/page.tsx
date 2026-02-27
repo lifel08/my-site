@@ -184,8 +184,8 @@ export default function SEOConsultingPage() {
 
           <p className="text-neutral-700 leading-relaxed">
             If you are looking for strategic SEO support, team training or an external perspective on
-            your current setup—including preparing your content and site signals for AI-powered search
-            experiences—I am happy to discuss your situation.
+            your current setup, including preparing your content and site signals for AI-powered search
+            experiences, I am happy to discuss your situation.
           </p>
 
           <ContactForm
