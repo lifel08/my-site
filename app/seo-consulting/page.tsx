@@ -42,8 +42,8 @@ export default function SEOConsultingPage() {
           <p className="text-base md:text-lg text-neutral-700 leading-relaxed">
             I help teams understand what matters in SEO, how to prioritise work and how to connect
             search performance with analytics through audits, workshops and strategic guidance. I
-            also support optimisation for generative AI search experiences—so your content and
-            technical setup are easier to interpret, cite and surface in AI-powered answers (sometimes
+            also support optimisation for generative AI search experiences, so your content and
+            technical setup are easier to interpret, cite and surface in AI-powered answers (often
             referred to as GEO).
           </p>
         </header>
@@ -62,7 +62,7 @@ export default function SEOConsultingPage() {
               <p className="mt-3 text-neutral-700 leading-relaxed">
                 I conduct technical and strategic SEO audits that focus on impact and feasibility.
                 Findings are translated into prioritised recommendations that teams can realistically
-                act on—covering classic SEO fundamentals as well as how content and entities are
+                act on. Covering classic SEO fundamentals as well as how content and entities are
                 understood in AI-assisted search and answer engines.
               </p>
             </div>
@@ -87,7 +87,7 @@ export default function SEOConsultingPage() {
                 Through tailored workshops and training sessions, I help marketing, product and
                 content teams build a shared understanding of SEO principles and decision-making.
                 When useful, I also introduce practical ways to create content that is easier for
-                generative systems to parse, attribute and reuse—without sacrificing editorial quality.
+                generative systems to parse, attribute and reuse, without sacrificing editorial quality.
               </p>
             </div>
 
@@ -98,7 +98,7 @@ export default function SEOConsultingPage() {
               <p className="mt-3 text-neutral-700 leading-relaxed">
                 I help teams link SEO efforts with analytics and reporting, so performance discussions
                 are based on data, not assumptions. Where possible, I also help define measurement
-                approaches for AI-driven discovery and referrals (e.g. changes in branded demand,
+                approaches for AI-driven discovery and referrals (for ex. changes in branded demand,
                 content engagement and downstream conversions).
               </p>
             </div>
@@ -118,7 +118,7 @@ export default function SEOConsultingPage() {
             </li>
             <li>
               Conducted in-depth SEO audits across e-commerce, SaaS, finance and B2B environments,
-              providing clear recommendations for internal teams—including improvements that support
+              providing clear recommendations for internal teams. Including improvements that support
               structured interpretation and attribution in generative AI answers.
             </li>
             <li>
@@ -170,7 +170,7 @@ export default function SEOConsultingPage() {
             </li>
             <li>
               <strong>Guidance:</strong> ongoing strategic support and review as teams implement
-              changes—covering both organic search fundamentals and improvements that help your
+              changes. Covering both organic search fundamentals and improvements that help your
               content show up in AI-generated answers.
             </li>
           </ol>
