@@ -9,7 +9,7 @@ function createNonce(size = 16) {
   return btoa(binary);
 }
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const nonce = createNonce();
 
   const host = req.headers.get("host") || "";
@@ -94,5 +94,7 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|api).*)",
+  ],
 };
