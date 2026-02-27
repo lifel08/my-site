@@ -12,12 +12,30 @@ function createNonce(size = 16) {
 export function middleware(req: NextRequest) {
   const nonce = createNonce();
 
+  const host = req.headers.get("host") || "";
+
+  // Non-prod hosts (falls du später mal staging/vercel nutzt)
+  const isNonProdHost =
+    host.includes("localhost") ||
+    host.startsWith("staging.") ||
+    host.endsWith(".vercel.app");
+
+  // Tag Assistant / GTM Preview wird typischerweise über Query-Parameter aktiviert
+  const url = req.nextUrl;
+  const isGtmPreview =
+    url.searchParams.has("gtm_debug") ||
+    url.searchParams.has("gtm_preview") ||
+    url.searchParams.has("gtm_auth");
+
+  // unsafe-eval nur auf non-prod ODER wenn wirklich GTM Preview aktiv ist
+  const unsafeEval = (isNonProdHost || isGtmPreview) ? " 'unsafe-eval'" : "";
+
   const csp = `
     default-src 'self';
     base-uri 'self';
     object-src 'none';
 
-    script-src 'self' 'nonce-${nonce}'
+    script-src 'self' 'nonce-${nonce}'${unsafeEval}
       https://challenges.cloudflare.com
       https://consent.cookiebot.com
       https://consentcdn.cookiebot.com
@@ -27,7 +45,7 @@ export function middleware(req: NextRequest) {
       https://www.googletagmanager.com
       https://www.google-analytics.com;
 
-    script-src-elem 'self' 'nonce-${nonce}'
+    script-src-elem 'self' 'nonce-${nonce}'${unsafeEval}
       https://challenges.cloudflare.com
       https://consent.cookiebot.com
       https://consentcdn.cookiebot.com
@@ -52,25 +70,25 @@ export function middleware(req: NextRequest) {
       https://consentcdn.cookiebot.com
       https://*.cookiebot.com
       https://*.usercentrics.eu
-      https://data.lfellinger.com;
+      https://data.lfellinger.com
+      https://tagassistant.google.com
+      https://*.google.com
+      https://*.googleusercontent.com;
 
     frame-src 'self'
-        https://challenges.cloudflare.com
-        https://consentcdn.cookiebot.com
-        https://www.googletagmanager.com
-        https://tagassistant.google.com
-        https://*.google.com
-        https://*.googleusercontent.com
-        https://data.lfellinger.com;
-        `.replace(/\s{2,}/g, " ").trim();
+      https://challenges.cloudflare.com
+      https://consentcdn.cookiebot.com
+      https://www.googletagmanager.com
+      https://tagassistant.google.com
+      https://*.google.com
+      https://*.googleusercontent.com
+      https://data.lfellinger.com;
+  `.replace(/\s{2,}/g, " ").trim();
 
   const requestHeaders = new Headers(req.headers);
   requestHeaders.set("x-nonce", nonce);
 
-  const res = NextResponse.next({
-    request: { headers: requestHeaders },
-  });
-
+  const res = NextResponse.next({ request: { headers: requestHeaders } });
   res.headers.set("Content-Security-Policy", csp);
   return res;
 }
