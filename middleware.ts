@@ -54,13 +54,15 @@ export function middleware(req: NextRequest) {
       https://*.usercentrics.eu
       https://data.lfellinger.com;
 
-    frame-src
-      https://challenges.cloudflare.com
-      https://consentcdn.cookiebot.com
-      https://www.googletagmanager.com
-      https://tagassistant.google.com
-      https://data.lfellinger.com;
-  `.replace(/\s{2,}/g, " ").trim();
+    frame-src 'self'
+        https://challenges.cloudflare.com
+        https://consentcdn.cookiebot.com
+        https://www.googletagmanager.com
+        https://tagassistant.google.com
+        https://*.google.com
+        https://*.googleusercontent.com
+        https://data.lfellinger.com;
+        `.replace(/\s{2,}/g, " ").trim();
 
   const requestHeaders = new Headers(req.headers);
   requestHeaders.set("x-nonce", nonce);
