@@ -23,8 +23,7 @@ type ContactFormProps = {
 type Status = "idle" | "sending" | "success" | "error";
 
 /* ------------------------------------------------------------------ */
-/* GA cookie -> user_pseudo_id                                         */
-/* _ga: GA1.1.895746381.1769617592 -> "895746381.1769617592"          */
+/* GA cookie -> user_pseudo_id                                        */
 /* ------------------------------------------------------------------ */
 function getGaUserPseudoId(): string | undefined {
   if (typeof document === "undefined") return;
@@ -35,7 +34,7 @@ function getGaUserPseudoId(): string | undefined {
 
   if (!gaRow) return;
 
-  const gaValue = gaRow.substring("_ga=".length); // "GA1.1.895746381.1769617592"
+  const gaValue = gaRow.substring("_ga=".length);
   const parts = gaValue.split(".");
   if (parts.length < 4) return;
 
@@ -43,7 +42,7 @@ function getGaUserPseudoId(): string | undefined {
 }
 
 /* ------------------------------------------------------------------ */
-/* SHA-256 hash (lowercase + trimmed) for email                        */
+/* SHA-256 hash for email                                             */
 /* ------------------------------------------------------------------ */
 async function sha256(value: string): Promise<string> {
   const normalized = value.trim().toLowerCase();
@@ -54,8 +53,7 @@ async function sha256(value: string): Promise<string> {
 }
 
 /* ------------------------------------------------------------------ */
-/* GTM dataLayer push in your desired schema                           */
-/* event is ALWAYS "ga4Event"                                          */
+/* dataLayer push                                                     */
 /* ------------------------------------------------------------------ */
 function pushGa4Event(payload: {
   eventName: string;
@@ -81,83 +79,100 @@ export default function ContactForm({
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const widgetIdRef = useRef<string | null>(null);
-
-  // Prevent double submit
   const inFlightRef = useRef(false);
-
-  // Prevent duplicate "lead" event per successful submit
   const leadSentRef = useRef(false);
 
-  // Token state + ref (kept in sync synchronously)
   const [token, setToken] = useState("");
   const tokenRef = useRef("");
 
-  // UI state
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
   /* ------------------------------------------------------------------ */
-  /* Load Turnstile script once                                          */
+  /* Lazy Load + Render Turnstile                                      */
   /* ------------------------------------------------------------------ */
   useEffect(() => {
     if (!siteKey) return;
+    const el = containerRef.current;
+    if (!el) return;
+
+    let cancelled = false;
+    let observer: IntersectionObserver | null = null;
 
     const scriptId = "cf-turnstile";
-    if (!document.getElementById(scriptId)) {
-      const s = document.createElement("script");
-      s.id = scriptId;
-      s.src =
-        "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
-      s.async = true;
-      s.defer = true;
-      document.body.appendChild(s);
+
+    function loadScript(): Promise<void> {
+      return new Promise((resolve, reject) => {
+        if (window.turnstile) return resolve();
+
+        const existing = document.getElementById(scriptId) as HTMLScriptElement | null;
+        if (existing) {
+          existing.addEventListener("load", () => resolve(), { once: true });
+          existing.addEventListener("error", () => reject(), { once: true });
+          return;
+        }
+
+        const s = document.createElement("script");
+        s.id = scriptId;
+        s.src =
+          "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+        s.async = true;
+        s.defer = true;
+
+        s.onload = () => resolve();
+        s.onerror = () => reject();
+
+        document.body.appendChild(s);
+      });
     }
-  }, [siteKey]);
 
-  /* ------------------------------------------------------------------ */
-  /* Render Turnstile widget                                             */
-  /* ------------------------------------------------------------------ */
-  useEffect(() => {
-    if (!siteKey) return;
+    async function renderWidget() {
+      if (cancelled) return;
+      if (widgetIdRef.current) return;
 
-    const tryRender = () => {
-      const el = containerRef.current;
+      await loadScript();
+      if (cancelled) return;
+
       const ts = window.turnstile;
+      if (!ts) return;
 
-      if (!el) return;
-      if (!ts || widgetIdRef.current) return;
+      const currentEl = containerRef.current;
+      if (!currentEl) return;
 
-      try {
-        widgetIdRef.current = ts.render(el, {
-          sitekey: siteKey,
-          callback: (t: string) => {
-            tokenRef.current = t;
-            setToken(t);
-          },
-          "expired-callback": () => {
-            tokenRef.current = "";
-            setToken("");
-          },
-          "error-callback": () => {
-            tokenRef.current = "";
-            setToken("");
-          },
-        });
-      } catch {
-        // ignore – retry via interval
-      }
+      widgetIdRef.current = ts.render(currentEl, {
+        sitekey: siteKey,
+        callback: (t: string) => {
+          tokenRef.current = t;
+          setToken(t);
+        },
+        "expired-callback": () => {
+          tokenRef.current = "";
+          setToken("");
+        },
+        "error-callback": () => {
+          tokenRef.current = "";
+          setToken("");
+        },
+      });
+    }
+
+    observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries[0]?.isIntersecting) return;
+        observer?.disconnect();
+        renderWidget().catch(() => {});
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(el);
+
+    return () => {
+      cancelled = true;
+      observer?.disconnect();
     };
-
-    const i = window.setInterval(() => {
-      tryRender();
-      if (widgetIdRef.current) window.clearInterval(i);
-    }, 100);
-
-    return () => window.clearInterval(i);
   }, [siteKey]);
 
-  /* ------------------------------------------------------------------ */
-  /* Hard reset without calling turnstile.reset/remove                   */
   /* ------------------------------------------------------------------ */
   function hardResetWidget() {
     tokenRef.current = "";
@@ -170,16 +185,13 @@ export default function ContactForm({
   }
 
   /* ------------------------------------------------------------------ */
-  /* Submit handler (NULL-SAFE)                                          */
-  /* ------------------------------------------------------------------ */
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (inFlightRef.current) return;
 
-    // CRITICAL: capture form synchronously
     const formEl = e.currentTarget;
-
     const currentToken = tokenRef.current;
+
     if (!currentToken) {
       setErrorMsg("Please complete the verification.");
       setStatus("error");
@@ -196,7 +208,7 @@ export default function ContactForm({
       name: String(fd.get("name") ?? "").trim(),
       email: String(fd.get("email") ?? "").trim(),
       message: String(fd.get("message") ?? "").trim(),
-      company: String(fd.get("company") ?? "").trim(), // honeypot
+      company: String(fd.get("company") ?? "").trim(),
       turnstileToken: currentToken,
       subject: defaultSubject ?? "",
     };
@@ -211,15 +223,11 @@ export default function ContactForm({
       let json: any = null;
       try {
         json = await res.json();
-      } catch {
-        // ignore
-      }
+      } catch {}
 
       if (res.ok && (json?.ok === true || json === null)) {
         setStatus("success");
 
-        // Fire GA4 wrapper event -> GTM trigger: Custom Event "ga4Event"
-        // -> GA4 event name comes from eventName ("lead")
         if (!leadSentRef.current) {
           leadSentRef.current = true;
 
@@ -235,7 +243,7 @@ export default function ContactForm({
           });
         }
 
-        formEl.reset(); // SAFE
+        formEl.reset();
         hardResetWidget();
         return;
       }
@@ -255,9 +263,6 @@ export default function ContactForm({
     }
   }
 
-  /* ------------------------------------------------------------------ */
-  /* UI helpers                                                         */
-  /* ------------------------------------------------------------------ */
   const clearErrorOnChange = () => {
     if (status === "error") {
       setStatus("idle");
@@ -267,9 +272,6 @@ export default function ContactForm({
 
   const sendDisabled = status === "sending" || !token;
 
-  /* ------------------------------------------------------------------ */
-  /* Render                                                             */
-  /* ------------------------------------------------------------------ */
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <input
@@ -278,7 +280,6 @@ export default function ContactForm({
         placeholder="Your name"
         onChange={() => {
           clearErrorOnChange();
-          // allow a new lead after user edits + re-sends
           if (status === "success") leadSentRef.current = false;
         }}
         className="w-full rounded-xl border border-neutral-300 px-4 py-3 text-sm"
@@ -308,12 +309,10 @@ export default function ContactForm({
         className="w-full rounded-xl border border-neutral-300 px-4 py-3 text-sm"
       />
 
-      {/* Honeypot */}
       <div className="hidden" aria-hidden="true">
         <input name="company" tabIndex={-1} autoComplete="off" />
       </div>
 
-      {/* Turnstile */}
       <div ref={containerRef} className="min-h-[65px]" />
 
       <button
@@ -321,7 +320,6 @@ export default function ContactForm({
         disabled={sendDisabled}
         onClick={() => {
           if (sendDisabled) return;
-
           pushGa4Event({
             eventName: "button_click",
             eventType: "kontakt",
