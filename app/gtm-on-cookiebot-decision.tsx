@@ -51,7 +51,6 @@ function injectGtm({
   const script = document.createElement("script");
   script.id = "gtm-loader";
   script.async = true;
-
   if (nonce) script.setAttribute("nonce", nonce);
 
   const dlParam =
@@ -76,7 +75,7 @@ export default function GtmOnCookiebotDecision({
   useEffect(() => {
     const dl = getDataLayer(dataLayerName);
 
-    const pushConsentSnapshot = (eventName: string) => {
+    const pushSnapshot = (eventName: string) => {
       const c = window.Cookiebot?.consent;
       dl.push({
         event: eventName,
@@ -86,61 +85,40 @@ export default function GtmOnCookiebotDecision({
       });
     };
 
-    const tryLoadIfAllowed = (sourceEvent: string) => {
+    const maybeLoad = (sourceEvent: string) => {
+      // Always snapshot (for debugging/auditing), but only load if statistics allowed
+      pushSnapshot(sourceEvent);
+
       if (loaded.current) return;
 
       const statsAllowed = !!window.Cookiebot?.consent?.statistics;
-
-      // Always push a snapshot for debugging/auditing
-      pushConsentSnapshot(sourceEvent);
-
-      // Only load GTM once statistics is allowed
       if (!statsAllowed) return;
 
       loaded.current = true;
       injectGtm({ nonce, gtmId, dataLayerName });
     };
 
-    // Fired when user accepts all / initial accept action (depends on banner UI)
-    const onAccept = () => tryLoadIfAllowed("cookiebot_accept");
+    // Accept: user confirmed choices (could be "accept all" or "accept selection" depending on UI)
+    const onAccept = () => maybeLoad("cookiebot_accept");
 
-    // Fired when user declines (we still snapshot, but won't load since stats=false)
-    const onDecline = () => tryLoadIfAllowed("cookiebot_decline");
+    // Decline: user denied (we snapshot, but will not load because statistics is false)
+    const onDecline = () => maybeLoad("cookiebot_decline");
 
-    // Fired when user changes consent choices (this is what you need for toggles)
-    const onUpdate = () => tryLoadIfAllowed("cookiebot_update");
-
-    // Category-specific events (Cookiebot can emit these depending on config)
-    const onStats = () => tryLoadIfAllowed("cookiebot_statistics");
-    const onPrefs = () => tryLoadIfAllowed("cookiebot_preferences");
-    const onMkt = () => tryLoadIfAllowed("cookiebot_marketing");
+    // ConsentReady: fires when consent is available/updated (this is the key one for toggles)
+    const onConsentReady = () => maybeLoad("cookiebot_consent_ready");
 
     window.addEventListener("CookiebotOnAccept", onAccept as EventListener);
     window.addEventListener("CookiebotOnDecline", onDecline as EventListener);
+    window.addEventListener("CookiebotOnConsentReady", onConsentReady as EventListener);
 
-    // These are the important ones for “I enabled statistics later”
-    window.addEventListener("CookiebotOnConsentReady", onUpdate as EventListener);
-    window.addEventListener("CookiebotOnLoad", onUpdate as EventListener);
-
-    // Optional extras (harmless if they never fire)
-    window.addEventListener("CookiebotOnStatistics", onStats as EventListener);
-    window.addEventListener("CookiebotOnPreferences", onPrefs as EventListener);
-    window.addEventListener("CookiebotOnMarketing", onMkt as EventListener);
-
-    // Fallback: if Cookiebot consent is already available (e.g. returning user),
-    // try immediately (still gated by statistics === true).
-    tryLoadIfAllowed("cookiebot_bootstrap");
+    // Optional: run once in case consent is already present (returning visitors)
+    // This will still NOT load unless statistics === true.
+    maybeLoad("cookiebot_bootstrap");
 
     return () => {
       window.removeEventListener("CookiebotOnAccept", onAccept as EventListener);
       window.removeEventListener("CookiebotOnDecline", onDecline as EventListener);
-
-      window.removeEventListener("CookiebotOnConsentReady", onUpdate as EventListener);
-      window.removeEventListener("CookiebotOnLoad", onUpdate as EventListener);
-
-      window.removeEventListener("CookiebotOnStatistics", onStats as EventListener);
-      window.removeEventListener("CookiebotOnPreferences", onPrefs as EventListener);
-      window.removeEventListener("CookiebotOnMarketing", onMkt as EventListener);
+      window.removeEventListener("CookiebotOnConsentReady", onConsentReady as EventListener);
     };
   }, [nonce, gtmId, dataLayerName]);
 
