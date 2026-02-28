@@ -1,3 +1,5 @@
+// proxy.ts  (Next.js "proxy" convention)
+
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
@@ -13,22 +15,19 @@ export function proxy(req: NextRequest) {
   const nonce = createNonce();
 
   const host = req.headers.get("host") || "";
-
-  // Non-prod hosts (falls du später mal staging/vercel nutzt)
   const isNonProdHost =
     host.includes("localhost") ||
     host.startsWith("staging.") ||
     host.endsWith(".vercel.app");
 
-  // Tag Assistant / GTM Preview wird typischerweise über Query-Parameter aktiviert
   const url = req.nextUrl;
   const isGtmPreview =
     url.searchParams.has("gtm_debug") ||
     url.searchParams.has("gtm_preview") ||
     url.searchParams.has("gtm_auth");
 
-  // unsafe-eval nur auf non-prod ODER wenn wirklich GTM Preview aktiv ist
-  const unsafeEval = (isNonProdHost || isGtmPreview) ? " 'unsafe-eval'" : "";
+  // Nur dort, wo du es wirklich brauchst
+  const unsafeEval = isNonProdHost || isGtmPreview ? " 'unsafe-eval'" : "";
 
   const csp = `
     default-src 'self';
@@ -92,9 +91,6 @@ export function proxy(req: NextRequest) {
   res.headers.set("Content-Security-Policy", csp);
   return res;
 }
-
 export const config = {
-  matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|api).*)",
-  ],
+  matcher: ["/((?!_next/|api/|.*\\..*).*)"],
 };
