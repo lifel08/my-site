@@ -8,6 +8,8 @@ type DataLayer = DataLayerEvent[];
 declare global {
   interface Window {
     [key: string]: unknown;
+
+    // Cookiebot global object
     Cookiebot?: {
       consent?: {
         preferences?: boolean;
@@ -27,8 +29,10 @@ type Props = {
 function getDataLayer(name: string): DataLayer {
   const existing = window[name];
 
+  // If dataLayer already exists, reuse it
   if (Array.isArray(existing)) return existing as DataLayer;
 
+  // Otherwise create a new one
   const dl: DataLayer = [];
   window[name] = dl;
   return dl;
@@ -43,16 +47,19 @@ function injectGtm({
   gtmId: string;
   dataLayerName: string;
 }) {
+  // Prevent multiple GTM injections
   if (document.getElementById("gtm-loader")) return;
 
   const dl = getDataLayer(dataLayerName);
 
-  dl.push({ event: "gtm_load_after_cookiebot_decision" });
+  // Optional debug marker
+  dl.push({ event: "gtm_load_after_cookiebot_accept" });
 
   const script = document.createElement("script");
   script.id = "gtm-loader";
   script.async = true;
 
+  // Apply CSP nonce if available
   if (nonce) script.setAttribute("nonce", nonce);
 
   const dlParam =
@@ -77,11 +84,12 @@ export default function GtmOnCookiebotDecision({
   useEffect(() => {
     const dl = getDataLayer(dataLayerName);
 
-    const pushConsentSnapshot = () => {
+    // Push consent state snapshot into dataLayer
+    const pushConsentSnapshot = (eventName: string) => {
       const c = window.Cookiebot?.consent;
 
       dl.push({
-        event: "cookiebot_decision",
+        event: eventName,
         cb_preferences: !!c?.preferences,
         cb_statistics: !!c?.statistics,
         cb_marketing: !!c?.marketing,
@@ -92,12 +100,20 @@ export default function GtmOnCookiebotDecision({
       if (loaded.current) return;
       loaded.current = true;
 
-      pushConsentSnapshot();
+      // On Accept → push consent snapshot and load GTM
+      pushConsentSnapshot("cookiebot_accept");
       injectGtm({ nonce, gtmId, dataLayerName });
     };
 
     const onAccept = () => loadOnce();
-    const onDecline = () => loadOnce();
+
+    const onDecline = () => {
+      // On Decline → push snapshot only (no GTM load)
+      pushConsentSnapshot("cookiebot_decline");
+
+      // Ensure GTM cannot be loaded later in this page view
+      loaded.current = true;
+    };
 
     window.addEventListener("CookiebotOnAccept", onAccept as EventListener);
     window.addEventListener("CookiebotOnDecline", onDecline as EventListener);
