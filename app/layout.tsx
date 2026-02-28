@@ -4,17 +4,17 @@ import Script from "next/script";
 import { headers } from "next/headers";
 import "./globals.css";
 
+// Client Component loads GTM after Consent Decision
+import GtmOnCookiebotDecision from "./gtm-on-cookiebot-decision";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://lfellinger.com"),
-
   title: "Lisa Fellinger | Web Analytics, Tracking & SEO Measurement",
   description:
     "Web Analytics and SEO Measurement focused on setups and training that support real business decisions.",
-
   alternates: {
     canonical: "https://lfellinger.com/",
   },
-
   icons: {
     icon: [
       { url: "/favicon.svg", type: "image/svg+xml" },
@@ -23,7 +23,6 @@ export const metadata: Metadata = {
     ],
     apple: "/apple-touch-icon.png",
   },
-
   openGraph: {
     type: "website",
     url: "https://lfellinger.com/",
@@ -40,7 +39,6 @@ export const metadata: Metadata = {
       },
     ],
   },
-
   twitter: {
     card: "summary_large_image",
     title: "Lisa Fellinger | Web Analytics, Tracking & SEO Measurement",
@@ -68,7 +66,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* --- Google Consent Mode v2 (Advanced) DEFAULTS: must run BEFORE GTM --- */}
+        {/* --- Google Consent Mode v2 (Advanced) DEFAULTS: may run before GTM --- */}
         <Script
           id="consent-mode-default"
           nonce={nonce}
@@ -78,7 +76,7 @@ export default async function RootLayout({
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
 
-              // Advanced Consent Mode: allow tags to load, but default everything to denied
+              // Advanced Consent Mode: default everything to denied
               gtag('consent', 'default', {
                 analytics_storage: 'denied',
                 ad_storage: 'denied',
@@ -93,15 +91,12 @@ export default async function RootLayout({
         {/* --- CMP SWITCH: load exactly ONE CMP --- */}
         {cmp === "USERCENTRICS" && (
           <>
-            {/* Usercentrics Autoblocker */}
             <Script
               id="usercentrics-autoblocker"
               nonce={nonce}
               src="https://web.cmp.usercentrics.eu/modules/autoblocker.js"
               strategy="beforeInteractive"
             />
-
-            {/* Usercentrics CMP UI */}
             <Script
               id="usercentrics-cmp"
               nonce={nonce}
@@ -123,35 +118,9 @@ export default async function RootLayout({
             strategy="beforeInteractive"
           />
         )}
-
-        {/* Google Tag Manager */}
-        <Script
-          id="gtm"
-          nonce={nonce}
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-              new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-              j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-              'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-              })(window,document,'script','dataLayer','${GTM_ID}');
-            `,
-          }}
-        />
       </head>
 
       <body className="min-h-screen bg-[#F4F2EE] text-neutral-900">
-        {/* GTM (noscript) */}
-        <noscript>
-          <iframe
-            src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
-            height="0"
-            width="0"
-            style={{ display: "none", visibility: "hidden" }}
-          />
-        </noscript>
-
         <header className="border-b border-neutral-200 bg-white">
           <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
             <Link href="/" className="font-semibold tracking-tight">
@@ -193,6 +162,17 @@ export default async function RootLayout({
             </nav>
           </div>
         </footer>
+
+        {/* GTM Loader (only for Cookiebot-Mode) */}
+        {cmp === "COOKIEBOT" && cookiebotCbid && (
+          <GtmOnCookiebotDecision
+            nonce={nonce ?? ""}
+            gtmId={GTM_ID}
+            dataLayerName="dataLayer"
+          />
+        )}
+
+        {/* Optional:Loader-Component for UC-Events. */}
       </body>
     </html>
   );
