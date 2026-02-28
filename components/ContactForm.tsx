@@ -236,7 +236,7 @@ export default function ContactForm({
 
           pushGa4Event({
             eventName: "lead",
-            eventType: "kontakt",
+            eventType: "contact",
             eventParameter1: "UserPseudoID",
             fieldValue1: getGaUserPseudoId(),
             email_hashed,
@@ -322,7 +322,7 @@ export default function ContactForm({
           if (sendDisabled) return;
           pushGa4Event({
             eventName: "button_click",
-            eventType: "kontakt",
+            eventType: "contact",
             eventLabel: "send_message",
           });
         }}
