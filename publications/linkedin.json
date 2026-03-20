@@ -1,4 +1,54 @@
-[  {
+[
+  {
+    "title": "There Will Be No “Safe” Career Path Anymore (maybe a pessimistic post?)",
+    "date": "2026-03-20",
+    "description": "Lately, reading about the future of work feels overwhelming. It’s always something like:",
+    "url": "https://www.linkedin.com/posts/lifel_there-will-be-no-safe-career-path-anymore-activity-7440683856690794496-4Jqm",
+    "image": ""
+  }, 
+  {
+    "title": "What Should an AI Chatbot Report Actually Tell You?",
+    "date": "2026-03-17",
+    "description": "You may have recently deployed an AI chatbot or you’re about to. Most companies use chatbots for three simple reasons:",
+    "url": "https://www.linkedin.com/posts/lifel_what-should-an-ai-chatbot-report-actually-activity-7439581691146342400-EamN",
+    "image": ""
+  },  
+  {
+    "title": "Is the Career Path of Developers Heading in the Same Direction as Translators and Content Creators?",
+    "date": "2026-03-13",
+    "description": "I recently built my own website with the help of AI. In a few days. Without stress. Without frustration. Without “deeply” knowing how to code. It was exciting. And strangely unsettling.",
+    "url": "https://www.linkedin.com/posts/lifel_is-the-career-path-of-developers-heading-activity-7438162257500557312-dUSN",
+    "image": ""
+  },  
+  {
+    "title": "How to setup a website with AI (first steps)",
+    "date": "2026-03-10",
+    "description": "Here’s a short summary of how I did it: 1. Clarified the goal & scope...",
+    "url": "https://www.linkedin.com/posts/lifel_webdevelopment-aitools-activity-7437044868549505025-_tCV",
+    "image": ""
+  },  
+  {
+    "title": "I Did It: I Built My Website with AI Support",
+    "date": "2026-03-06",
+    "description": "Like many others right now, I created my own website with the help of AI. What’s included: * Homepage * Two service pages * Content overview * Imprint & data privacy page. Tech stack: Next.js (React + TypeScript) on Vercel",
+    "url": "https://www.linkedin.com/posts/lifel_i-did-it-i-built-my-website-with-ai-support-activity-7435595315254042624-fcdI",
+    "image": ""
+  },  
+  {
+    "title": "🚀 Freelancing: Day One (Almost)",
+    "date": "2026-03-03",
+    "description": "March is here and with it, my first official days as a full-time freelancer. Over the past weeks, I’ve gone from “preparing” to “actually doing”:",
+    "url": "https://www.linkedin.com/posts/lifel_lisa-fellinger-web-analytics-tracking-activity-7434508160088059905-PbuS",
+    "image": "images/linkedin/2026-03-03-website-share.jpg"
+  },  
+  {
+    "title": "🚀 Freelancing: Day One (Almost)",
+    "date": "2026-03-03",
+    "description": "March is here and with it, my first official days as a full-time freelancer. Over the past weeks, I’ve gone from “preparing” to “actually doing”:",
+    "url": "https://www.linkedin.com/posts/lifel_lisa-fellinger-web-analytics-tracking-activity-7434508160088059905-PbuS",
+    "image": ""
+  },  
+  {
     "title": "3 Early Warning Signs a Project Won’t Run Smoothly (and Why I Still Say “Yes”)",
     "date": "2026-02-27",
     "description": "I’ve been reflecting on what I’ve learned from past projects. Especially the early signals that tell me whether a collaboration will be smooth… or complicated.",
