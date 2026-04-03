@@ -9,7 +9,6 @@ type DataLayer = DataLayerEvent[];
 declare global {
   interface Window {
     [key: string]: unknown;
-
     Cookiebot?: {
       consent?: {
         preferences?: boolean;
@@ -39,20 +38,33 @@ function injectGtm({
   nonce,
   gtmId,
   dataLayerName,
+  onLoad,
 }: {
   nonce: string;
   gtmId: string;
   dataLayerName: string;
+  onLoad?: () => void;
 }) {
-  if (document.getElementById("gtm-loader")) return;
+  if (document.getElementById("gtm-loader")) {
+    onLoad?.();
+    return;
+  }
 
   const dl = getDataLayer(dataLayerName);
-  dl.push({ event: "gtm_load_after_cookiebot_statistics" });
+
+  // offizieller GTM-Start
+  dl.push({
+    "gtm.start": new Date().getTime(),
+    event: "gtm.js",
+  });
 
   const script = document.createElement("script");
   script.id = "gtm-loader";
   script.async = true;
-  if (nonce) script.setAttribute("nonce", nonce);
+
+  if (nonce) {
+    script.setAttribute("nonce", nonce);
+  }
 
   const dlParam =
     dataLayerName !== "dataLayer"
@@ -63,7 +75,16 @@ function injectGtm({
     gtmId
   )}${dlParam}`;
 
-  document.head.appendChild(script);
+  script.onload = () => {
+    onLoad?.();
+  };
+
+  const firstScript = document.getElementsByTagName("script")[0];
+  if (firstScript?.parentNode) {
+    firstScript.parentNode.insertBefore(script, firstScript);
+  } else {
+    document.head.appendChild(script);
+  }
 }
 
 export default function GtmOnCookiebotDecision({
@@ -72,6 +93,7 @@ export default function GtmOnCookiebotDecision({
   dataLayerName = "dataLayer",
 }: Props) {
   const loaded = useRef(false);
+  const gtmReady = useRef(false);
   const previousUrlRef = useRef("");
   const lastTrackedUrlRef = useRef("");
 
@@ -126,10 +148,15 @@ export default function GtmOnCookiebotDecision({
 
       loaded.current = true;
 
-      // aktuellen Seitenaufruf direkt beim Consent/GTM-Load mitgeben
-      pushCustomPageView();
-
-      injectGtm({ nonce, gtmId, dataLayerName });
+      injectGtm({
+        nonce,
+        gtmId,
+        dataLayerName,
+        onLoad: () => {
+          gtmReady.current = true;
+          pushCustomPageView();
+        },
+      });
     };
 
     const onAccept = () => maybeLoad("cookiebot_accept");
@@ -147,12 +174,13 @@ export default function GtmOnCookiebotDecision({
       window.removeEventListener("CookiebotOnDecline", onDecline as EventListener);
       window.removeEventListener("CookiebotOnConsentReady", onConsentReady as EventListener);
     };
-  }, [nonce, gtmId, dataLayerName, pathname, queryString]);
+  }, [nonce, gtmId, dataLayerName]);
 
   useEffect(() => {
     const statsAllowed = !!window.Cookiebot?.consent?.statistics;
     if (!statsAllowed) return;
     if (!pathname) return;
+    if (!gtmReady.current) return;
 
     pushCustomPageView();
   }, [pathname, queryString]);
