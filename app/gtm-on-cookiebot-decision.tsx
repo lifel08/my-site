@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 
 type DataLayerEvent = Record<string, unknown>;
@@ -34,6 +34,17 @@ function getDataLayer(name: string): DataLayer {
   return dl;
 }
 
+function buildCleanQueryString(searchParams: URLSearchParams): string {
+  const params = new URLSearchParams(searchParams.toString());
+
+  params.delete("gtm_debug");
+  params.delete("gtm_preview");
+  params.delete("gtm_auth");
+
+  const query = params.toString();
+  return query ? `?${query}` : "";
+}
+
 function injectGtm({
   nonce,
   gtmId,
@@ -52,7 +63,6 @@ function injectGtm({
 
   const dl = getDataLayer(dataLayerName);
 
-  // offizieller GTM-Start
   dl.push({
     "gtm.start": new Date().getTime(),
     event: "gtm.js",
@@ -92,22 +102,25 @@ export default function GtmOnCookiebotDecision({
   gtmId,
   dataLayerName = "dataLayer",
 }: Props) {
-  const loaded = useRef(false);
+  const gtmInjected = useRef(false);
   const gtmReady = useRef(false);
   const previousUrlRef = useRef("");
   const lastTrackedUrlRef = useRef("");
 
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const queryString = searchParams?.toString() ?? "";
+
+  const cleanQueryString = useMemo(() => {
+    return buildCleanQueryString(searchParams);
+  }, [searchParams]);
 
   const pushCustomPageView = () => {
+    if (!pathname) return;
+
     const dl = getDataLayer(dataLayerName);
+    const pagePath = `${pathname}${cleanQueryString}`;
+    const currentUrl = `${window.location.origin}${pagePath}`;
 
-    const pagePath = queryString ? `${pathname}?${queryString}` : pathname;
-    const currentUrl = window.location.href;
-
-    if (!pagePath) return;
     if (lastTrackedUrlRef.current === currentUrl) return;
 
     dl.push({
@@ -126,27 +139,13 @@ export default function GtmOnCookiebotDecision({
   }, []);
 
   useEffect(() => {
-    const dl = getDataLayer(dataLayerName);
-
-    const pushSnapshot = (eventName: string) => {
-      const c = window.Cookiebot?.consent;
-      dl.push({
-        event: eventName,
-        cb_preferences: !!c?.preferences,
-        cb_statistics: !!c?.statistics,
-        cb_marketing: !!c?.marketing,
-      });
-    };
-
-    const maybeLoad = (sourceEvent: string) => {
-      pushSnapshot(sourceEvent);
-
-      if (loaded.current) return;
+    const maybeLoadGtm = () => {
+      if (gtmInjected.current) return;
 
       const statsAllowed = !!window.Cookiebot?.consent?.statistics;
       if (!statsAllowed) return;
 
-      loaded.current = true;
+      gtmInjected.current = true;
 
       injectGtm({
         nonce,
@@ -159,22 +158,25 @@ export default function GtmOnCookiebotDecision({
       });
     };
 
-    const onAccept = () => maybeLoad("cookiebot_accept");
-    const onDecline = () => maybeLoad("cookiebot_decline");
-    const onConsentReady = () => maybeLoad("cookiebot_consent_ready");
+    const onConsentReady = () => {
+      maybeLoadGtm();
+    };
 
-    window.addEventListener("CookiebotOnAccept", onAccept as EventListener);
-    window.addEventListener("CookiebotOnDecline", onDecline as EventListener);
-    window.addEventListener("CookiebotOnConsentReady", onConsentReady as EventListener);
+    window.addEventListener(
+      "CookiebotOnConsentReady",
+      onConsentReady as EventListener
+    );
 
-    maybeLoad("cookiebot_bootstrap");
+    // returning visitors / already resolved consent
+    maybeLoadGtm();
 
     return () => {
-      window.removeEventListener("CookiebotOnAccept", onAccept as EventListener);
-      window.removeEventListener("CookiebotOnDecline", onDecline as EventListener);
-      window.removeEventListener("CookiebotOnConsentReady", onConsentReady as EventListener);
+      window.removeEventListener(
+        "CookiebotOnConsentReady",
+        onConsentReady as EventListener
+      );
     };
-  }, [nonce, gtmId, dataLayerName]);
+  }, [nonce, gtmId, dataLayerName, pathname, cleanQueryString]);
 
   useEffect(() => {
     const statsAllowed = !!window.Cookiebot?.consent?.statistics;
@@ -183,7 +185,7 @@ export default function GtmOnCookiebotDecision({
     if (!gtmReady.current) return;
 
     pushCustomPageView();
-  }, [pathname, queryString]);
+  }, [pathname, cleanQueryString]);
 
   return null;
 }
