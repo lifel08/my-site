@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 
 type DataLayerEvent = Record<string, unknown>;
 type DataLayer = DataLayerEvent[];
@@ -71,6 +72,36 @@ export default function GtmOnCookiebotDecision({
   dataLayerName = "dataLayer",
 }: Props) {
   const loaded = useRef(false);
+  const previousUrlRef = useRef("");
+  const lastTrackedUrlRef = useRef("");
+
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const queryString = searchParams?.toString() ?? "";
+
+  const pushCustomPageView = () => {
+    const dl = getDataLayer(dataLayerName);
+
+    const pagePath = queryString ? `${pathname}?${queryString}` : pathname;
+    const currentUrl = window.location.href;
+
+    if (!pagePath) return;
+    if (lastTrackedUrlRef.current === currentUrl) return;
+
+    dl.push({
+      event: "custom_page_view",
+      page_path: pagePath,
+      page_location: currentUrl,
+      page_referrer: previousUrlRef.current || document.referrer || "",
+    });
+
+    previousUrlRef.current = currentUrl;
+    lastTrackedUrlRef.current = currentUrl;
+  };
+
+  useEffect(() => {
+    previousUrlRef.current = document.referrer || "";
+  }, []);
 
   useEffect(() => {
     const dl = getDataLayer(dataLayerName);
@@ -86,7 +117,6 @@ export default function GtmOnCookiebotDecision({
     };
 
     const maybeLoad = (sourceEvent: string) => {
-      // Always snapshot (for debugging/auditing), but only load if statistics allowed
       pushSnapshot(sourceEvent);
 
       if (loaded.current) return;
@@ -95,24 +125,21 @@ export default function GtmOnCookiebotDecision({
       if (!statsAllowed) return;
 
       loaded.current = true;
+
+      // aktuellen Seitenaufruf direkt beim Consent/GTM-Load mitgeben
+      pushCustomPageView();
+
       injectGtm({ nonce, gtmId, dataLayerName });
     };
 
-    // Accept: user confirmed choices (could be "accept all" or "accept selection" depending on UI)
     const onAccept = () => maybeLoad("cookiebot_accept");
-
-    // Decline: user denied (we snapshot, but will not load because statistics is false)
     const onDecline = () => maybeLoad("cookiebot_decline");
-
-    // ConsentReady: fires when consent is available/updated (this is the key one for toggles)
     const onConsentReady = () => maybeLoad("cookiebot_consent_ready");
 
     window.addEventListener("CookiebotOnAccept", onAccept as EventListener);
     window.addEventListener("CookiebotOnDecline", onDecline as EventListener);
     window.addEventListener("CookiebotOnConsentReady", onConsentReady as EventListener);
 
-    // Optional: run once in case consent is already present (returning visitors)
-    // This will still NOT load unless statistics === true.
     maybeLoad("cookiebot_bootstrap");
 
     return () => {
@@ -120,7 +147,15 @@ export default function GtmOnCookiebotDecision({
       window.removeEventListener("CookiebotOnDecline", onDecline as EventListener);
       window.removeEventListener("CookiebotOnConsentReady", onConsentReady as EventListener);
     };
-  }, [nonce, gtmId, dataLayerName]);
+  }, [nonce, gtmId, dataLayerName, pathname, queryString]);
+
+  useEffect(() => {
+    const statsAllowed = !!window.Cookiebot?.consent?.statistics;
+    if (!statsAllowed) return;
+    if (!pathname) return;
+
+    pushCustomPageView();
+  }, [pathname, queryString]);
 
   return null;
 }
