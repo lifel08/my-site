@@ -1,4 +1,73 @@
-[
+[ {
+    "title": "What almost broke my AI Traffic Performance Dashboard",
+    "date": "2026-04-24",
+    "description": "I recently built an AI traffic dashboard (link in the comments) and a few things turned out to be more complex than expected.",
+    "url": "https://www.linkedin.com/posts/lifel_what-almost-broke-my-ai-traffic-performance-activity-7453337190455177216-3_sW",
+    "image": "images/linkedin/2026-04-24-ga4-blend-data.jpg"
+  },
+  {
+    "title": "I attended my first web analytics event as a freelancer and it hit differently.",
+    "date": "2026-04-21",
+    "description": "I joined Measurecamp Amsterdam, which was also my first time experiencing the MeasureCamp format. Coming from mostly SEO conferences, this was a shift in more ways than one.",
+    "url": "https://www.linkedin.com/posts/lifel_i-attended-my-first-web-analytics-event-as-activity-7452249980947439616-px2h",
+    "image": "images/linkedin/2026-04-21-measurecamp-amsterdam.jpg"
+  },
+  {
+    "title": "I’ll be at Measurecamp Amsterdam this Saturday (tomorrow).",
+    "date": "2026-04-17",
+    "description": "Looking forward to learning more about AI traffic, measurement setups and how people are adapting their analytics in this space.",
+    "url": "https://www.linkedin.com/posts/lifel_measurecampamsterdam-analyticscommunity-networking-activity-7450800637518360577-4TUF",
+    "image": "images/linkedin/2026-04-17-measurecamp-amsterdam.jpg"
+  }, 
+  {
+    "title": "I’ve been working on an AI traffic dashboard and turned it into a free Looker Studio template that anyone can use (link in comments).",
+    "date": "2026-04-14",
+    "description": "How it works: 1. Open the template, 2. Click 'Edit & Share' at the top right, 3. Select in the data control at the top left of the page the GA4 property of your choice.",
+    "url": "https://www.linkedin.com/posts/lifel_ive-been-working-on-an-ai-traffic-dashboard-activity-7449713289070022656-EXok",
+    "image": "images/linkedin/2026-04-14-ai-performance-dashboard.jpg"
+  }, 
+  {
+    "title": "Talking to heavy AI users made me look up what the broader public is actually doing with AI",
+    "date": "2026-04-10",
+    "description": "Some of my coworkers were heavy AI users. One had built his own agent and even used it to reduce his screen time. Another one was deeply into coding.",
+    "url": "https://www.linkedin.com/posts/lifel_talking-to-heavy-ai-users-made-me-look-up-activity-7448263718414594048-bGL9",
+    "image": "images/linkedin/2026-04-10-understanding-ai-maturity.jpg"
+  }, 
+  {
+    "title": "Interesting analysis from Kevin Indig on how AI selects its sources.",
+    "date": "2026-04-07",
+    "description": "One point stood out to me: Ranking well helps, but doesn’t guarantee citation. That’s very much in line with what I’ve been seeing in AI traffic reporting.",
+    "url": "https://www.linkedin.com/posts/lifel_if-you-think-writing-the-best-answer-for-activity-7447199473019011072-u6Jm2",
+    "image": "images/linkedin/2026-04-07-a-handful-of-domains-dominate-ai-citations-kevin-indig.jpg"
+  }, 
+  {
+    "title": "I recently came across a category of tools that promise better attribution. Even without user consent or cookies.",
+    "date": "2026-04-03",
+    "description": "The idea is: user data, transform it (for ex. hashing, transforming identifiers, etc.) and use it as an “anonymous” identifier.",
+    "url": "https://www.linkedin.com/posts/lifel_i-recently-came-across-a-category-of-tools-activity-7445727090873708544-O3JM",
+    "image": ""
+  }, 
+  {
+    "title": "How to know if our SEO (and LLM) web efforts actually drive app conversions? (A rough guideline to get an idea)",
+    "date": "2026-03-31",
+    "description": "In app-first businesses, this is hard to answer because attribution often breaks when the website hands the user over to the App Store / Google Play.",
+    "url": "https://www.linkedin.com/posts/lifel_appattribution-mobilemeasurement-seo-activity-7444639834066862080-wBt8",
+    "image": ""
+  }, 
+  {
+    "title": "My biggest “fail” in Web Analytics is actually a repeating one and that’s exactly why I think it’s valuable.",
+    "date": "2026-03-27",
+    "description": "Every few months, I catch myself doing the same thing: Going deep into analysis… and initially overlooking what’s happening in plain sight.",
+    "url": "https://www.linkedin.com/posts/lifel_my-biggest-fail-in-web-analytics-is-actually-activity-7443205545035005952-Imqf",
+    "image": "images/linkedin/2026-03-26-enhanced-measurement-function-ga4.jpg"
+  }, 
+  {
+    "title": "I often get asked what the “latest insights” are when it comes to SEO and AI.",
+    "date": "2026-03-24",
+    "description": "There isn’t one simple answer. But this guide by Jo Furnival is a good starting point for one aspect of it. The idea that stands out: Content doesn’t just need to rank. It needs to be usable by models.",
+    "url": "https://www.linkedin.com/posts/lifel_why-your-seo-strategy-still-matters-for-ai-activity-7442118954870919169-baSx",
+    "image": "images/linkedin/2026-03-24-why-your-seo-strategy-still-matters-for-ai-sitebulb.jpg"
+  }, 
   {
     "title": "There Will Be No “Safe” Career Path Anymore (maybe a pessimistic post?)",
     "date": "2026-03-20",
