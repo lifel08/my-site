@@ -60,13 +60,13 @@ function LinkedInCard({ item }: { item: Extract<FeedItem, { type: "linkedin" }> 
           <Image
             src="/images/lisa_fellinger_linkedin_profile.jpg"
             alt="Lisa Fellinger"
-            width={28}
-            height={28}
+            width={32}
+            height={32}
             className="rounded-full object-cover"
           />
           <div className="min-w-0 leading-tight">
             <div className="text-sm font-medium truncate">Lisa Fellinger</div>
-            <div className="text-xs text-neutral-500 truncate">Senior Web Analytics Consultant</div>
+            <div className="text-xs text-neutral-500 truncate">Freelance Web Analytics Consultant & SEO Trainer | Measurement Strategy, Reporting & Data Quality | GA4, GTM, BigQuery</div>
           </div>
         </div>
 
