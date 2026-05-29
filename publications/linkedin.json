@@ -1,4 +1,81 @@
-[ {
+[{
+    "title": "Am I the only person actually thinking in this company?",
+    "date": "2026-05-29",
+    "description": "Let’s be honest: most of us have probably had that thought at least once.",
+    "url": "https://www.linkedin.com/posts/lifel_am-i-the-only-person-actually-thinking-in-activity-7466020718602952706-kgB5",
+    "image": ""
+  },
+  {
+    "title": "7 simple console checks I often use as a web analyst",
+    "date": "2026-05-26",
+    "description": "Nothing fancy. Just things that I personally often use when debugging tracking...",
+    "url": "https://www.linkedin.com/posts/lifel_7-simple-console-checks-i-often-use-as-a-activity-7464933722056781824-_HdG",
+    "image": "images/linkedin/2026-05-26-performance.getEntriesByType_resource-console-check.jpg"
+  },
+   {
+    "title": "7 simple console checks I often use as a web analyst",
+    "date": "2026-05-26",
+    "description": "Nothing fancy. Just things that I personally often use when debugging tracking...",
+    "url": "https://www.linkedin.com/posts/lifel_7-simple-console-checks-i-often-use-as-a-activity-7464933722056781824-_HdG",
+    "image": "images/linkedin/2026-05-26-performance.getEntriesByType_resource-console-check.jpg"
+  },
+  {
+    "title": "Tool recommendation: In my daily work, I run a lot of tests",
+    "date": "2026-05-22",
+    "description": "One tool that’s been surprisingly useful for this: monosnap",
+    "url": "https://www.linkedin.com/posts/lifel_tool-recommendation-in-my-daily-work-i-activity-7463484184372596736-Q16a",
+    "image": "images/linkedin/2026-05-22-monosnap-recommendation.jpg"
+  },
+  {
+    "title": "We set up tracking like always… but page_views don’t show up.",
+    "date": "2026-05-19",
+    "description": "A situation we see quite often after relaunches. Tracking is implemented. GTM is live. Everything looks correct. But...",
+    "url": "https://www.linkedin.com/posts/lifel_we-set-up-tracking-like-always-but-pageviews-activity-7462403479735537664-Rr8X",
+    "image": "images/linkedin/2026-05-19-virtual-page-views.jpg"
+  },
+  {
+    "title": "I genuinely enjoy going to conferences and events.",
+    "date": "2026-05-15",
+    "description": "But if I could design my own “Wunschkonzert” (the perfect agenda) of talks, it would probably look something like:",
+    "url": "https://www.linkedin.com/posts/lifel_i-genuinely-enjoy-going-to-conferences-and-activity-7460947326413598720-4MNe",
+    "image": ""
+  },
+  {
+    "title": "Grounding Pages: what are they? And should you rebuild your content around them?",
+    "date": "2026-05-12",
+    "description": "Grounding pages are: Pages that clearly explain what something is ...",
+    "url": "https://www.linkedin.com/posts/lifel_ich-glaube-ich-habe-ein-kleines-luxusproblem-activity-7459897968356188160-zlGk",
+    "image": "images/linkedin/2026-05-12-groundingpages-repsot-hanns-kronenberg.jpg"
+  },
+  {
+    "title": "International Women’s Day is over.",
+    "date": "2026-05-08",
+    "description": "But something stayed with me. In my field, I still don’t see many women.",
+    "url": "https://www.linkedin.com/posts/lifel_international-womens-day-is-over-but-something-activity-7458410772336037889-Wo5S",
+    "image": ""
+  },
+  {
+    "title": "Cross-Domain Consent Sharing with Usercentrics: Common Pitfalls",
+    "date": "2026-05-05",
+    "description": "Not because they aren’t useful. But because they don’t work well in a generic template. Content grouping ...",
+    "url": "https://www.linkedin.com/posts/lifel_cross-domain-consent-sharing-with-usercentrics-activity-7457323489105072128-66K8",
+    "image": "images/linkedin/2026-05-05-cross-domain-consent-sharing-usercentrics.jpg"
+  },
+  {
+    "title": "When I built my AI traffic dashboard, I left a few things out on purpose",
+    "date": "2026-05-01",
+    "description": "Not because they aren’t useful. But because they don’t work well in a generic template. Content grouping ...",
+    "url": "https://www.linkedin.com/posts/lifel_when-i-built-my-ai-traffic-dashboard-link-activity-7455873955501961216-G84q",
+    "image": ""
+  },
+  {
+    "title": "After building and testing the AI traffic dashboard on a few datasets, some patterns stood out quite clearly:",
+    "date": "2026-04-28",
+    "description": "AI traffic is still small, but highly concentrated. 1. Most Landing Pages get no AI traffic at all. A small number of pages receive the majority of it. (...)",
+    "url": "https://www.linkedin.com/posts/lifel_after-building-and-testing-the-ai-traffic-activity-7454786793536843776-0BHL",
+    "image": "images/linkedin/2026-05-28-ai-traffic-engagement.jpg"
+  },
+  {
     "title": "What almost broke my AI Traffic Performance Dashboard",
     "date": "2026-04-24",
     "description": "I recently built an AI traffic dashboard (link in the comments) and a few things turned out to be more complex than expected.",
