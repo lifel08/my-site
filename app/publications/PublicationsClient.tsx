@@ -62,11 +62,11 @@ function LinkedInCard({ item }: { item: Extract<FeedItem, { type: "linkedin" }> 
             alt="Lisa Fellinger"
             width={32}
             height={32}
-            className="rounded-full object-cover"
+            className="aspect-square rounded-full object-cover"
           />
           <div className="min-w-0 leading-tight">
             <div className="text-sm font-medium truncate">Lisa Fellinger</div>
-            <div className="text-xs text-neutral-500 truncate">Freelance Web Analytics Consultant & SEO Trainer | Measurement Strategy, Reporting & Data Quality | GA4, GTM, BigQuery</div>
+            <div className="text-xs text-neutral-500 truncate">Freelance Web Analytics Consultant & SEO</div>
           </div>
         </div>
 
