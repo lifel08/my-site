@@ -1,4 +1,53 @@
 [{
+    "title": "AI analytics tools: Many new tools and services are currently appearing in the data analytics world.",
+    "date": "2026-06-23",
+    "description": "One category becoming increasingly popular: semantic layer / AI analytics tools. At first glance, they almost feel magical. ",
+    "url": "https://www.linkedin.com/posts/lifel_ai-analytics-tools-many-new-tools-and-services-activity-7475080690238160896-5nVw",
+    "image": "images/linkedin/2026-06-23-semantic-layer-reporting-tools.jpg"
+  },
+  {
+    "title": "Tool recommendation: Testing login behaviour sounds simple.",
+    "date": "2026-06-19",
+    "description": "Until you need to test the same registration flow 20 times. For tracking setups, this comes up quite often. Here website owners want to know: ...",
+    "url": "https://www.linkedin.com/posts/lifel_tool-recommendation-testing-login-behaviour-activity-7473638368317440000-AAXl",
+    "image": "images/linkedin/2026-06-19-tool-10minute-mail.jpg"
+  },
+  {
+    "title": "How do they know? - “How visible are we in AI answers?” — Part 2",
+    "date": "2026-06-16",
+    "description": "In another post, I talked about the new generation of AI-only monitoring tools. But now the more interesting question: How do “classic” SEO tools like Sistrix or Ahrefs actually measure AI visibility?",
+    "url": "https://www.linkedin.com/posts/lifel_how-do-they-know-how-visible-are-we-in-activity-7472543836787912704-zYFN",
+    "image": "images/linkedin/2026-06-16-ai-citation-tools.jpg"
+  },
+  {
+    "title": "How should you name a file properly?",
+    "date": "2026-06-12",
+    "description": "Who doesn’t know this situation: You save a file somewhere on your computer or in the cloud and think: “How should I name this so I can actually find it again later?”",
+    "url": "https://www.linkedin.com/posts/lifel_how-should-you-name-a-file-properly-who-activity-7471094275032911873-AHIq",
+    "image": "images/linkedin/2026-06-12-example-of-bad-filenaming.jpg"
+  },
+  {
+    "title": "How visible are we in AI answers?",
+    "date": "2026-06-09",
+    "description": "One of the most asked questions lately. And honestly: measuring AI visibility is currently messy. Today, companies try to approximate AI traffic and AI visibility through multiple signals. Like for example:",
+    "url": "https://www.linkedin.com/posts/lifel_how-visible-are-we-in-ai-answers-one-activity-7470007091211198464-c-Se",
+    "image": "images/linkedin/2026-06-09-ai-visibility-tools.jpg"
+  },
+  {
+    "title": "How far are you with e-invoicing?",
+    "date": "2026-06-05",
+    "description": "This year I joined the freelancer world. Which also meant: I suddenly had to seriously deal with invoicing.",
+    "url": "https://www.linkedin.com/posts/lifel_how-far-are-you-with-e-invoicing-this-year-activity-7468557620405129216--9cD",
+    "image": "images/linkedin/2026-06-05-self-build-e-invoice-generator.jpg"
+  },
+  {
+    "title": "Google Tag Manager without consent?",
+    "date": "2026-06-02",
+    "description": "In Germany, the juristically safest approach is usually not to load GTM before consent was given. In practice though, that topic is still heavily discussed.",
+    "url": "https://www.linkedin.com/posts/lifel_google-tag-manager-without-consent-in-germany-activity-7467470389066125314-kIIP",
+    "image": "images/linkedin/2026-06-02-google-tag-manager-via-usercentrics.jpg"
+  },
+  {
     "title": "Am I the only person actually thinking in this company?",
     "date": "2026-05-29",
     "description": "Let’s be honest: most of us have probably had that thought at least once.",
