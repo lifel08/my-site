@@ -1,4 +1,60 @@
-[{
+{
+    "title": "UTMs are great. Just not for everything",
+    "date": "2026-07-28",
+    "description": "UTMs are very useful when you want to understand where website visitors came from. But...",
+    "url": "https://www.linkedin.com/posts/lifel_utms-are-great-just-not-for-everything-activity-7487764161679130624-OY5o",
+    "image": "images/linkedin/2026-07-28-unassigned-traffic-caused-by-utms-ga4-exploration-report.jpg"
+  },
+  {
+    "title": "Simple explanations depend on who is listening",
+    "date": "2026-07-24",
+    "description": "I recently gave an interview about tracking and data protection. My interview partner was a student who does not work in this field.",
+    "url": "https://www.linkedin.com/posts/lifel_simple-explanations-depend-on-who-is-listening-activity-7486314734930247680-eh1F",
+    "image": ""
+  },
+  {
+    "title": "Google Tag Gateway is not equal to server-side Tracking with Google Tag Manager",
+    "date": "2026-07-21",
+    "description": "I recently had this again in a developer conversation for a new project. We were talking about Consent Mode for quite a while.",
+    "url": "https://www.linkedin.com/posts/lifel_ga4-googletagmanager-digitalmarketing-activity-7485232066587189248-29FV",
+    "image": "images/linkedin/2026-07-21-repost-dana-ditomaso-gtm-vs-gtg.jpg"
+  },
+  {
+    "title": "I post twice a week on LinkedIn",
+    "date": "2026-07-17",
+    "description": "One post is usually more related to my professional field.The other one is usually a bit more personal...",
+    "url": "https://www.linkedin.com/posts/lifel_i-post-twice-a-week-on-linkedin-one-post-activity-7483777924865867777-neYp",
+    "image": "images/linkedin/2026-07-17-buffer-linkedin-feed.jpg"
+  },
+  {
+    "title": "Test your mobile functionality",
+    "date": "2026-07-14",
+    "description": "How often do we actually test things on mobile?",
+    "url": "https://www.linkedin.com/posts/lifel_test-your-mobile-functionality-on-many-activity-7482690680092409856-E56M",
+    "image": "images/linkedin/2026-07-14-active-users-by-device-category-ga4.jpg"
+  },
+  {
+    "title": "Freelancing: 3 beliefs I’ve personally already started throwing overboard.",
+    "date": "2026-07-10",
+    "description": "But there are already a few beliefs I can cautiously let go of for myself. 1.Freelancing is lonely, as you don’t have colleagues anymore...",
+    "url": "https://www.linkedin.com/posts/lifel_freelancing-3-beliefs-ive-personally-already-activity-7481241086989012993-CaWV",
+    "image": ""
+  },
+  {
+    "title": "A small note from my side",
+    "date": "2026-06-30",
+    "description": "I’m in Croatia this week and will take a short LinkedIn break as well",
+    "url": "https://www.linkedin.com/posts/lifel_a-small-note-from-my-side-im-in-croatia-activity-7477617254319259648-NMx0",
+    "image": "images/linkedin/2026-06-30-freelancing-holidays.jpg"
+  },
+  {
+    "title": "Freelancers and holidays",
+    "date": "2026-06-26",
+    "description": "I think this is one of the things that sounds simple from the outside. Just take holidays. But in practice, it can feel a bit more complicated.",
+    "url": "https://www.linkedin.com/posts/lifel_freelancers-and-holidays-i-think-this-is-activity-7476167448652754944-XQOY",
+    "image": ""
+  },
+  {
     "title": "AI analytics tools: Many new tools and services are currently appearing in the data analytics world.",
     "date": "2026-06-23",
     "description": "One category becoming increasingly popular: semantic layer / AI analytics tools. At first glance, they almost feel magical. ",
