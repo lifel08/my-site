@@ -149,7 +149,7 @@ export default function SEOConsultingPage() {
 
           <ol className="list-decimal pl-6 space-y-3 text-neutral-700 leading-relaxed">
             <li>
-              <strong>Context:</strong> understanding your organisation, goals and current SEO setup.
+              <strong>Context:</strong> understanding your organisation, goals and current Search (SEO / AI) setup.
             </li>
             <li>
               <strong>Assessment:</strong> audits and analysis with a focus on relevance and impact,
