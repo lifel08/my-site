@@ -167,7 +167,7 @@ export default function HomePage() {
                 />
               </div>
               <div className="mt-3 px-2 pb-1 text-sm text-neutral-600">
-                Lisa Fellinger · Web Analytics & SEO Consulting
+                Lisa Fellinger · Web Analytics & Search Consulting (SEO/AI)
               </div>
             </div>
           </div>
