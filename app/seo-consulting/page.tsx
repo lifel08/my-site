@@ -41,7 +41,7 @@ export default function SEOConsultingPage() {
           </h1>
           <p className="text-base md:text-lg text-neutral-700 leading-relaxed">
             I help teams improve search visibility across traditional search engines and AI-powered experiences,  often called 'GEO', generative search experience. 
-            Through technical audits, analytics, workshops and strategic guidance, I identify what matters, clarify priorities and turn complex findings into actionable decisions. 
+            Through technical audits, analytical insights, workshops and strategic guidance, I identify what matters, clarify priorities and turn complex findings into actionable decisions. 
             My work connects SEO, AI visibility and measurement, helping teams strengthen the content, technical signals and data foundations that make their expertise easier to discover, interpret, reference and surface across search.
           </p>
         </header>
