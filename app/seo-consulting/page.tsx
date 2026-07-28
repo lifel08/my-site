@@ -3,7 +3,7 @@ import ContactForm from "@/components/ContactForm";
 import { buildMetadata } from "@/lib/seo";
 import { JsonLd, jsonLdBreadcrumb, jsonLdService } from "@/lib/structured-data";
 
-const title = "SEO Consulting & AI Visibility | Strategy, Audits & Training";
+const title = "SEO & AI Visibility Consulting | Strategy, Audits & Training";
 const description =
   "Technical SEO and AI search consulting focused on strategy, analytics and complex challenges. Audits and insights that drive better decisions.";
 
