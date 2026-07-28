@@ -90,11 +90,10 @@ export default function HomePage() {
           <div className="space-y-6 lg:col-span-7">
             <header className="max-w-3xl space-y-4">
               <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">
-                Web Analytics & SEO Consulting for small and growing businesses
+                Independent Web Analytics Consulting for Better Decisions
               </h1>
               <p className="text-base leading-relaxed text-neutral-700 md:text-lg">
-                I help teams build reliable, privacy-aware measurement and turn
-                complex data into clear insights stakeholders can act on.
+                Helping organisations connect analytics, SEO and AI visibility to make better marketing decisions.
               </p>
             </header>
 
@@ -113,7 +112,7 @@ export default function HomePage() {
                   10+ years
                 </div>
                 <div className="mt-1 text-sm leading-relaxed text-neutral-700">
-                  Online marketing experience across analytics, SEO and
+                  Online marketing experience across analytics, SEO, AI Visibility and
                   performance marketing.
                 </div>
               </div>

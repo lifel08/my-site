@@ -3,9 +3,9 @@ import ContactForm from "@/components/ContactForm";
 import { buildMetadata } from "@/lib/seo";
 import { JsonLd, jsonLdBreadcrumb, jsonLdService } from "@/lib/structured-data";
 
-const title = "SEO Consulting & Training | Strategy, Audits & Enablement";
+const title = "SEO Consulting & AI Visibility | Strategy, Audits & Training";
 const description =
-  "SEO consulting and training focused on clear strategy, structured audits and measurable search performance. Practical, analytics-driven SEO explained so teams can apply it independently.";
+  "Technical SEO and AI search consulting focused on strategy, analytics and complex challenges. Audits and insights that drive better decisions.";
 
 export const metadata = buildMetadata({
   title,
@@ -37,14 +37,12 @@ export default function SEOConsultingPage() {
         {/* HERO */}
         <header className="max-w-3xl space-y-4">
           <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">
-            SEO strategy, audits and team enablement
+            Technical SEO and AI search strategy, audits and guidance
           </h1>
           <p className="text-base md:text-lg text-neutral-700 leading-relaxed">
-            I help teams understand what matters in SEO, how to prioritise work and how to connect
-            search performance with analytics through audits, workshops and strategic guidance. I
-            also support optimisation for generative AI search experiences, so your content and
-            technical setup are easier to interpret, cite and surface in AI-powered answers (often
-            referred to as GEO).
+            I help teams improve search visibility across traditional search engines and AI-powered experiences,  often called 'GEO', generative search experience. 
+            Through technical audits, analytics, workshops and strategic guidance, I identify what matters, clarify priorities and turn complex findings into actionable decisions. 
+            My work connects SEO, AI visibility and measurement, helping teams strengthen the content, technical signals and data foundations that make their expertise easier to discover, interpret, reference and surface across search.
           </p>
         </header>
 
@@ -57,25 +55,21 @@ export default function SEOConsultingPage() {
           <div className="grid gap-6 md:grid-cols-2">
             <div className="rounded-2xl border border-neutral-200 bg-white p-6">
               <h3 className="text-xl font-semibold tracking-tight">
-                SEO audits with clear priorities
+                SEO & AI Visibility Audits with clear priorities
               </h3>
               <p className="mt-3 text-neutral-700 leading-relaxed">
-                I conduct technical and strategic SEO audits that focus on impact and feasibility.
-                Findings are translated into prioritised recommendations that teams can realistically
-                act on. Covering classic SEO fundamentals as well as how content and entities are
-                understood in AI-assisted search and answer engines.
+                I conduct technical and strategic audits across SEO and AI visibility, with a clear focus on impact and feasibility. 
+                Findings are translated into prioritised, actionable recommendations covering core SEO fundamentals as well as how content, entities and technical signals are understood and surfaced in AI-powered search.
               </p>
             </div>
 
             <div className="rounded-2xl border border-neutral-200 bg-white p-6">
               <h3 className="text-xl font-semibold tracking-tight">
-                SEO strategy and roadmap definition
+                SEO and AI visibility - strategy and roadmap definition
               </h3>
               <p className="mt-3 text-neutral-700 leading-relaxed">
-                I support organisations in defining SEO strategies and roadmaps that align with
-                business goals, internal capabilities and other marketing channels. This includes
-                planning for search journeys that increasingly blend classic results with AI-generated
-                summaries and recommendations.
+                I support organisations in shaping SEO and AI visibility strategies that align with business goals, internal capabilities and broader marketing priorities. 
+                The resulting roadmaps account for search journeys that increasingly span traditional results, AI-generated summaries and recommendation-driven experiences.
               </p>
             </div>
 
@@ -84,22 +78,20 @@ export default function SEOConsultingPage() {
                 Team training and workshops
               </h3>
               <p className="mt-3 text-neutral-700 leading-relaxed">
-                Through tailored workshops and training sessions, I help marketing, product and
-                content teams build a shared understanding of SEO principles and decision-making.
-                When useful, I also introduce practical ways to create content that is easier for
-                generative systems to parse, attribute and reuse, without sacrificing editorial quality.
+              Through tailored workshops and training in English, German and French, I help marketing, product and content teams build a shared understanding of SEO, AI visibility and search decision-making. 
+              My background in analytics, tracking and paid marketing adds a broader traffic acquisition perspective, helping teams understand how channels interact and how performance should be measured. 
+              I also cover practical ways to make content easier for generative systems to interpret and reference without sacrificing editorial quality.
               </p>
             </div>
 
             <div className="rounded-2xl border border-neutral-200 bg-white p-6">
               <h3 className="text-xl font-semibold tracking-tight">
-                Connecting SEO and analytics
+                Connecting SEO, AI Visibility and analytics
               </h3>
               <p className="mt-3 text-neutral-700 leading-relaxed">
-                I help teams link SEO efforts with analytics and reporting, so performance discussions
-                are based on data, not assumptions. Where possible, I also help define measurement
-                approaches for AI-driven discovery and referrals (for ex. changes in branded demand,
-                content engagement and downstream conversions).
+                I help teams connect SEO and AI visibility data with their wider analytics and reporting setup. 
+                This involves assessing emerging data sources, integrating relevant signals into existing dashboards and defining measurement approaches that are both practical and credible.
+                By combining AI visibility indicators with traffic, engagement, branded demand and conversion data, I help teams build a clearer and more complete picture of search performance.
               </p>
             </div>
           </div>
@@ -113,8 +105,8 @@ export default function SEOConsultingPage() {
 
           <ul className="list-disc pl-6 space-y-3 text-neutral-700 leading-relaxed">
             <li>
-              Led SEO strategy consulting for enterprise and mid-sized organisations, coordinating and
-              prioritising numerous SEO initiatives across technical, content and structural topics.
+             Conducted comprehensive, data-driven search performance audits for enterprise and mid-sized organisations across traditional SEO and AI visibility. 
+             Synthesised technical, content, analytics and visibility insights into prioritised recommendations that supported decision-making and defined the next stages of the search roadmap.
             </li>
             <li>
               Conducted in-depth SEO audits across e-commerce, SaaS, finance and B2B environments,
