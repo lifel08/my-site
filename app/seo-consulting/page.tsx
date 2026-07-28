@@ -65,7 +65,7 @@ export default function SEOConsultingPage() {
 
             <div className="rounded-2xl border border-neutral-200 bg-white p-6">
               <h3 className="text-xl font-semibold tracking-tight">
-                SEO & AI visibility - strategy and roadmap definition
+                SEO & AI Visibility - strategy and roadmap definition
               </h3>
               <p className="mt-3 text-neutral-700 leading-relaxed">
                 I support organisations in shaping SEO and AI visibility strategies that align with business goals, internal capabilities and broader marketing priorities. 
