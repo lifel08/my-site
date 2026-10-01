@@ -14,10 +14,40 @@ if (!projectToken || !host) {
     );
   }
 } else {
-  posthog.init(projectToken, {
-    api_host: host,
-    defaults: "2026-01-30",
-    capture_exceptions: true,
-    debug: process.env.NODE_ENV === "development",
-  });
+  // Defer initialization until Cookiebot statistics consent is granted.
+  // If Cookiebot is not present, initialize immediately (compatibility).
+  let _phInitialized = false;
+
+  const doInit = () => {
+    if (_phInitialized) return;
+    _phInitialized = true;
+    posthog.init(projectToken, {
+      api_host: host,
+      defaults: "2026-01-30",
+      capture_exceptions: true,
+      debug: process.env.NODE_ENV === "development",
+    });
+  };
+
+  const maybeInit = () => {
+    // If Cookiebot exists, only init when statistics consent is true.
+    // If Cookiebot is not present, initialize immediately.
+    const cb = (window as any).Cookiebot;
+    if (cb) {
+      const statsAllowed = !!cb?.consent?.statistics;
+      if (statsAllowed) doInit();
+    } else {
+      doInit();
+    }
+  };
+
+  // Listen for Cookiebot consent readiness event and attempt init then.
+  if (typeof window !== "undefined") {
+    window.addEventListener("CookiebotOnConsentReady", maybeInit as EventListener);
+    // Try immediately for returning visitors / resolved consent state
+    maybeInit();
+  } else {
+    // Server-side path (shouldn't happen for instrumentation-client), initialize defensively
+    doInit();
+  }
 }
