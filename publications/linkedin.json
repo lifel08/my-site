@@ -1,5 +1,75 @@
 [
   {
+    "title": "Data Analytics Bullshit Bingo 🎯",
+    "date": "2026-09-29",
+    "description": "A lighthearted look at the recurring phrases, metrics, and assumptions that keep resurfacing in analytics conversations — often without enough evidence behind them.",
+    "url": "https://www.linkedin.com/posts/lifel_data-analytics-bingo-things-we-say-all-activity-7510594571400040448-PWrO",
+    "image": ""
+  },
+  {
+    "title": "I started freelancing this year and as a newbie, taxes come with quite a few things to figure out.",
+    "date": "2026-09-25",
+    "description": "Freelancing has brought a lot of learning curves — and taxes is one of the more practical, less glamorous ones. A short reflection on what it means to run a small business beyond the actual work.",
+    "url": "https://www.linkedin.com/posts/lifel_i-started-freelancing-this-year-and-as-a-activity-7509145036714876928-d7Oi",
+    "image": ""
+  },
+  {
+    "title": "I've been looking more closely at attribution tools lately.",
+    "date": "2026-09-22",
+    "description": "Attribution is becoming more interesting — and more difficult — as cookies, consent, and platform data become less reliable. A short note on where I think the tooling is heading and where it still falls short.",
+    "url": "https://www.linkedin.com/posts/lifel_ive-been-looking-more-closely-at-attribution-activity-7508057950213738496-b2xh",
+    "image": ""
+  },
+  {
+    "title": "Analytics Pioneers Recap",
+    "date": "2026-09-18",
+    "description": "A quick recap from my first visit to Analytics Pioneers: a great mix of practical discussions, smart people, and fresh ideas around measurement, data quality, and the analytics ecosystem.",
+    "url": "https://www.linkedin.com/posts/lifel_recap-of-my-first-visit-to-the-analytics-activity-7506612572205309952-7Kjm",
+    "image": ""
+  },
+  {
+    "title": "Finding the cause of crawl errors can feel like looking for a needle in a haystack.",
+    "date": "2026-09-15",
+    "description": "Crawl errors are a classic SEO problem: simple to describe, but often messy to diagnose. A note on how hard it can be to isolate the real cause when the signals are fragmented and noisy.",
+    "url": "https://www.linkedin.com/posts/lifel_finding-the-cause-of-crawl-errors-can-feel-activity-7505521329777926146-xYzs",
+    "image": ""
+  },
+  {
+    "title": "Analytics Pioneers' event teaser",
+    "date": "2026-09-11",
+    "description": "A quick teaser ahead of the Analytics Pioneers event: a lot to learn, plenty of relevant conversations, and a strong reminder that the analytics community is still full of brilliant and practical people.",
+    "url": "https://www.linkedin.com/posts/lifel_form-this-weekend-on-i-am-finally-back-in-activity-7504071604788785152-PqBJ",
+    "image": ""
+  },
+  {
+    "title": "We can measure AI visibility. But what does “good” actually look like?",
+    "date": "2026-09-08",
+    "description": "AI visibility is increasingly measurable, but the real challenge is deciding what to optimise for. A short reflection on why visibility metrics are useful — and why they still need context.",
+    "url": "https://www.linkedin.com/posts/lifel_we-can-measure-ai-visibility-but-what-does-activity-7502984460158738432-jJqJ",
+    "image": ""
+  },
+  {
+    "title": "Unpopular AI opinion",
+    "date": "2026-09-04",
+    "description": "A candid take on where AI is often oversold: it can be genuinely useful, but the hype sometimes hides the operational and strategic realities behind it.",
+    "url": "https://www.linkedin.com/posts/lifel_unpopular-opinion-it-seems-like-ai-was-supposed-activity-7501534901410701312-ZOjf",
+    "image": ""
+  },
+  {
+    "title": "My takeaway from my LinkedIn break in August?",
+    "date": "2026-09-01",
+    "description": "After a short break from posting, I came back with a clearer sense of what actually matters online: less pressure, more intention, and better focus on what is worth sharing.",
+    "url": "https://www.linkedin.com/posts/lifel_my-takeaway-from-my-linkedin-break-in-august-activity-7500447519538307072-MIsj",
+    "image": ""
+  },
+  {
+    "title": "I will take a summer break from posting on LinkedIn.",
+    "date": "2026-07-31",
+    "description": "A short note about taking a summer break from posting and why it can be useful to step back from constant publishing without losing momentum altogether.",
+    "url": "https://www.linkedin.com/posts/lifel_a-small-note-for-august-from-posting-on-activity-7488851392888025088-657o",
+    "image": ""
+  },
+  {
     "title": "UTMs are great. Just not for everything",
     "date": "2026-07-28",
     "description": "UTMs are very useful when you want to understand where website visitors came from. But...",
