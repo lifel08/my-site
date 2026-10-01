@@ -9,6 +9,10 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@opentelemetry/api-logs": "^0.222.0",
+    "@opentelemetry/exporter-logs-otlp-http": "^0.222.0",
+    "@opentelemetry/resources": "^2.11.0",
+    "@opentelemetry/sdk-logs": "^0.222.0",
     "gray-matter": "^4.0.3",
     "next": "16.1.4",
     "next-mdx-remote": "^6.0.0",

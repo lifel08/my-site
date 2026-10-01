@@ -127,14 +127,109 @@ export default function PrivacyPolicyPage() {
           Such processing only takes place after you have given your consent.
         </p>
 
-        <h2 className="pt-4 text-xl font-semibold">10. Contact</h2>
+        <h2 className="pt-4 text-xl font-semibold">10. PostHog</h2>
+        <p className="leading-relaxed">
+          With your consent, we use PostHog to analyse website usage, improve usability, and
+          investigate technical problems. The provider is PostHog Inc., 2261 Market Street
+          #4008, San Francisco, CA 94114, United States.
+        </p>
+
+        <h3 className="pt-3 text-lg font-medium">Website analytics, heatmaps, and error tracking</h3>
+        <p className="leading-relaxed">
+          PostHog processes page views, website interactions, technical browser and device
+          information, pseudonymous browser and session identifiers, and browser error
+          details. Cookies and similar browser storage may be used to associate interactions
+          with a browser.
+        </p>
+        <p className="leading-relaxed">
+          We record events when visitors successfully submit the contact form or load
+          additional publications. These custom events include the selected service category
+          or the number of publications loaded. They do not include the name, email address,
+          or message entered in the contact form.
+        </p>
+        <p className="leading-relaxed">
+          We also use heatmaps to visualise patterns in clicks, mouse or touch positions,
+          and scrolling. This helps us understand which parts of the website visitors
+          interact with. Browser error tracking helps us identify and investigate technical
+          failures.
+        </p>
+
+        <h3 className="pt-3 text-lg font-medium">Session replay</h3>
+        <p className="leading-relaxed">
+          We use session replay to reconstruct interactions within this website, such as
+          clicks, scrolling, and navigation, to investigate usability issues.
+        </p>
+        <p className="leading-relaxed">
+          Form input values are masked in recordings. Ordinary page text and images are not
+          masked. Browser console messages and network request metadata, including timing
+          information, may also be captured for troubleshooting. Capture of request and
+          response headers and bodies, as well as canvas content, is disabled.
+        </p>
+        <p className="leading-relaxed">
+          Pseudonymous identifiers may associate recordings and browser errors with the
+          corresponding browser or session. These identifiers do not directly identify
+          visitors by name.
+        </p>
+
+        <h3 className="pt-3 text-lg font-medium">Consent and withdrawal</h3>
+        <p className="leading-relaxed">
+          PostHog browser analytics, heatmaps, browser error tracking, and session recording
+          are activated only after you grant Statistics consent through Cookiebot. The legal
+          basis is Art. 6(1)(a) GDPR and, where applicable, § 25(1) TDDDG.
+        </p>
+        <p className="leading-relaxed">
+          You can refuse or withdraw consent at any time through the cookie settings.
+          Withdrawal stops further consent-based collection without affecting the
+          lawfulness of processing carried out before withdrawal.
+        </p>
+
+        <h3 className="pt-3 text-lg font-medium">Technical contact-form logs</h3>
+        <p className="leading-relaxed">
+          Separately, we send limited server-side contact-form logs to PostHog to monitor
+          reliability and troubleshoot failures. These contain fixed status messages
+          indicating email-request acceptance, email-sending errors, or rate limiting,
+          together with the endpoint and technical log metadata.
+        </p>
+        <p className="leading-relaxed">
+          The added log messages do not contain contact-form names, email addresses, or
+          enquiry text. This processing is based on Art. 6(1)(f) GDPR and our legitimate
+          interest in maintaining a reliable contact form.
+        </p>
+
+        <h3 className="pt-3 text-lg font-medium">Hosting and retention</h3>
+        <p className="leading-relaxed">
+          We use PostHog Cloud EU, with hosting in Frankfurt, Germany.
+        </p>
+        <p className="leading-relaxed">
+          Session recordings are retained for 30 days. Analytics events and associated
+          metadata are retained under PostHog's Free-plan retention period of one year.
+          Separate server-side contact-form logs are retained for 14 days.
+        </p>
+
+        <h3 className="pt-3 text-lg font-medium">Recipients and international transfers</h3>
+        <p className="leading-relaxed">
+          PostHog processes website data on our behalf as a processor. Its data processing
+          terms provide for international-transfer safeguards, including the EU-U.S. Data
+          Privacy Framework and, where applicable, EU Standard Contractual Clauses. EU
+          hosting does not by itself exclude all processing or access outside the European
+          Economic Area.
+        </p>
+        <p className="leading-relaxed">
+          Further information is available in{" "}
+          <a href="https://posthog.com/privacy" target="_blank" rel="noopener noreferrer">
+            PostHog's privacy policy
+          </a>
+          .
+        </p>
+
+        <h2 className="pt-4 text-xl font-semibold">11. Contact</h2>
         <p className="leading-relaxed">
           If you contact us by email or via a contact form, your data will be processed to
           handle your request. The legal basis for this processing is Art. 6(1)(b) GDPR
           (performance of a contract or pre-contractual measures).
         </p>
 
-        <h2 className="pt-4 text-xl font-semibold">11. Your Rights</h2>
+        <h2 className="pt-4 text-xl font-semibold">12. Your Rights</h2>
         <p className="leading-relaxed">
           You have the right to request access, rectification, erasure, restriction of
           processing, data portability, and to object to processing of your personal data.

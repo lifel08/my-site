@@ -1,11 +1,27 @@
-import { NextResponse } from "next/server";
+import { SeverityNumber } from "@opentelemetry/api-logs";
+import { after, NextResponse } from "next/server";
 import { Resend } from "resend";
+import { posthogLogger, posthogLoggerProvider } from "@/instrumentation";
 
 export const runtime = "nodejs";
 
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000; // 10 min
 const RATE_LIMIT_MAX = 5; // 5 requests / window / IP
 const ipHits = new Map<string, number[]>();
+
+function emitContactLog(body: string, severityNumber: SeverityNumber) {
+  posthogLogger?.emit({
+    body,
+    severityNumber,
+    attributes: {
+      endpoint: "/api/contact",
+    },
+  });
+
+  after(async () => {
+    await posthogLoggerProvider?.forceFlush();
+  });
+}
 
 function getClientIp(req: Request) {
   const xff = req.headers.get("x-forwarded-for");
@@ -52,6 +68,7 @@ export async function POST(req: Request) {
     const ip = getClientIp(req);
 
     if (isRateLimited(ip)) {
+      emitContactLog("contact_request_rate_limited", SeverityNumber.WARN);
       return NextResponse.json({ ok: false, error: "rate_limited" }, { status: 429 });
     }
 
@@ -123,9 +140,11 @@ export async function POST(req: Request) {
 
     if (error) {
       console.error("RESEND SEND ERROR:", error);
+      emitContactLog("contact_email_delivery_failed", SeverityNumber.ERROR);
       return NextResponse.json({ ok: false, error: "resend_error" }, { status: 502 });
     }
 
+    emitContactLog("contact_email_accepted", SeverityNumber.INFO);
     return NextResponse.json({ ok: true, resendId: data?.id }, { status: 200 });
   } catch (err: any) {
     const msg = typeof err?.message === "string" ? err.message : "unknown";
