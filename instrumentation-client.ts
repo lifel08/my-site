@@ -25,6 +25,7 @@ if (!projectToken || !host) {
       api_host: host,
       defaults: "2026-01-30",
       capture_exceptions: true,
+      capture_heatmaps: true,
       debug: process.env.NODE_ENV === "development",
     });
   };
