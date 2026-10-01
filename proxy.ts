@@ -42,7 +42,8 @@ export function proxy(req: NextRequest) {
       https://*.usercentrics.eu
       https://app.usercentrics.eu
       https://www.googletagmanager.com
-      https://www.google-analytics.com;
+      https://www.google-analytics.com
+      https://*.posthog.com;
 
     script-src-elem 'self' 'nonce-${nonce}'${unsafeEval}
       https://challenges.cloudflare.com
@@ -52,7 +53,10 @@ export function proxy(req: NextRequest) {
       https://*.usercentrics.eu
       https://app.usercentrics.eu
       https://www.googletagmanager.com
-      https://www.google-analytics.com;
+      https://www.google-analytics.com
+      https://*.posthog.com;
+
+    worker-src 'self' blob:;
 
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     style-src-elem 'self' 'unsafe-inline' https://www.googletagmanager.com https://fonts.googleapis.com;
@@ -72,7 +76,8 @@ export function proxy(req: NextRequest) {
       https://data.lfellinger.com
       https://tagassistant.google.com
       https://*.google.com
-      https://*.googleusercontent.com;
+      https://*.googleusercontent.com
+      https://*.posthog.com;
 
     frame-src 'self'
       https://challenges.cloudflare.com

@@ -3,6 +3,7 @@
 import { useCallback, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import posthog from "posthog-js";
 
 type FeedItem =
   | {
@@ -142,6 +143,9 @@ export function PublicationsClient({
       } = await res.json();
 
       setItems((prev) => [...prev, ...data.items]);
+      posthog.capture("publications_more_loaded", {
+        items_loaded: data.items.length,
+      });
       setNextOffset(data.nextOffset);
       setHasMore(data.hasMore);
     } finally {

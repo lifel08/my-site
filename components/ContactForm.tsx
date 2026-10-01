@@ -3,6 +3,7 @@
 console.log("CONTACTFORM_VERSION = 2026-01-28-ga4-datalayer-v3-lead-emailhash");
 
 import { useEffect, useRef, useState } from "react";
+import posthog from "posthog-js";
 
 declare global {
   interface Window {
@@ -230,6 +231,10 @@ export default function ContactForm({
 
         if (!leadSentRef.current) {
           leadSentRef.current = true;
+
+          posthog.capture("contact_form_submitted", {
+            service: defaultSubject ?? "general",
+          });
 
           const email = String(fd.get("email") ?? "").trim();
           const email_hashed = email ? await sha256(email) : undefined;

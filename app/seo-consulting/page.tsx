@@ -40,9 +40,16 @@ export default function SEOConsultingPage() {
             Technical SEO and AI search strategy, audits and guidance
           </h1>
           <p className="text-base md:text-lg text-neutral-700 leading-relaxed">
-            I help teams improve search visibility across traditional search engines and AI-powered experiences,  often called 'GEO', generative search experience. 
-            Through technical audits, analytical insights, workshops and strategic guidance, I identify what matters, clarify priorities and turn complex findings into actionable decisions. 
-            My work connects SEO, AI visibility and measurement, helping teams strengthen the content, technical signals and data foundations that make their expertise easier to discover, interpret, reference and surface across search.
+            I help teams improve visibility across search engines and AI-powered experiences.
+            Through technical audits, data insights, workshops and strategic guidance, I turn
+            complex findings into clear priorities and actionable decisions, connecting SEO, AI
+            visibility and measurement to make their expertise easier to discover and reference.
+            <a
+              href="#contact-form"
+              className="ml-1 font-semibold text-[#ff6400] underline underline-offset-4 transition-opacity hover:opacity-80"
+            >
+              Please contact me.
+            </a>
           </p>
         </header>
 
@@ -169,7 +176,7 @@ export default function SEOConsultingPage() {
         </section>
 
         {/* CONTACT */}
-        <section className="max-w-3xl space-y-6">
+        <section id="contact-form" className="max-w-3xl space-y-6">
           <h2 className="text-2xl md:text-3xl font-semibold tracking-tight">
             Get in touch
           </h2>

@@ -42,6 +42,12 @@ export default function WebAnalyticsPage() {
           <p className="text-base md:text-lg text-neutral-700 leading-relaxed">
             I design and implement tracking and measurement setups that are well-documented,
             privacy-aware and aligned with how teams actually work.
+            <a
+              href="#contact-form"
+              className="ml-1 font-semibold text-[#ff6400] underline underline-offset-4 transition-opacity hover:opacity-80"
+            >
+              Please contact me.
+            </a>
           </p>
         </header>
 
@@ -166,7 +172,7 @@ export default function WebAnalyticsPage() {
         </section>
 
         {/* CONTACT */}
-        <section className="max-w-3xl space-y-6">
+        <section id="contact-form" className="max-w-3xl space-y-6">
           <h2 className="text-2xl md:text-3xl font-semibold tracking-tight">
             Get in touch
           </h2>
