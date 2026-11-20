@@ -6,6 +6,7 @@ import "./globals.css";
 
 // Client Component loads GTM after Consent Decision
 import GtmOnCookiebotDecision from "./gtm-on-cookiebot-decision";
+import PostHogConsent from "@/components/PostHogConsent";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://lfellinger.com"),
@@ -162,6 +163,8 @@ export default async function RootLayout({
             </nav>
           </div>
         </footer>
+
+        <PostHogConsent />
 
         {/* GTM Loader (only for Cookiebot-Mode) */}
         {cmp === "COOKIEBOT" && cookiebotCbid && (
