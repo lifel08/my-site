@@ -254,11 +254,11 @@ export default function PrivacyPolicyPage() {
           <li>
             <strong>Resend</strong> (Resend, Inc., United States) sends the email that delivers
             your contact-form message to us, and sends our replies from the address
-            lisa@lfellinger.com.
+            lisa [at] lfellinger [dot] com.
           </li>
           <li>
             <strong>ImprovMX</strong> (ImprovMX Incorporated, United States) receives emails sent
-            to lisa@lfellinger.com and forwards them to our mailbox. This includes messages
+            to lisa [at] lfellinger [dot] com and forwards them to our mailbox. This includes messages
             delivered by the contact form. According to the provider, technical data about
             forwarded emails is kept for troubleshooting for 7 days and then deleted.
           </li>
