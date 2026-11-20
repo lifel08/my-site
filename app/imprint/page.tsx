@@ -34,13 +34,14 @@ export default function ImprintPage() {
             <div>Zum Breijpott 15</div>
             <div>47533 Kleve</div>
             <div>Germany</div>
+            <div>VAT ID pursuant to § 27a UStG: DE461616499</div>
           </div>
         </section>
 
         <section className="space-y-2">
           <h2 className="text-xl font-semibold tracking-tight">Contact</h2>
           <p className="text-neutral-700 leading-relaxed">
-            Email: lisafellinger.consulting [at] gmail [dot] com
+            Email: lisa [at] lfellinger [dot] com
           </p>
         </section>
 {/* Add after registration
