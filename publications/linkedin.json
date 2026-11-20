@@ -1,4 +1,59 @@
-[
+[{
+    "title": "Pre-Vacation Checklist for Freelancers: What to Sort Out Before You Go Offline",
+    "date": "2026-10-27",
+    "description": "A practical checklist for freelancers to run through before going on vacation, so time off stays truly off.",
+    "url": "https://www.linkedin.com/posts/lifel_for-a-good-reason-a-pre-vacation-checklist-share-7520756541399060480-MWYQ",
+    "image": ""
+  },
+    {
+    "title": "Canaries in the Coal Mine: Six Facts About AI and Jobs, and Why Your Job Will Change Rather Than Disappear",
+    "date": "2026-10-23",
+    "description": "A look at the research on AI's early employment effects, and why the takeaway for analysts and marketers is that roles will change, not vanish.",
+    "url": "https://www.linkedin.com/posts/lifel_canaries-in-the-coal-mine-six-facts-about-share-7519292091332722688-XmHC",
+    "image": "images/linkedin/2026-10-23-article-teaser-canaries-in-the-coal-mine.jpg"
+  },
+  {
+    "title": "AI Terminology Cheat Sheet for Industry Events",
+    "date": "2026-10-20",
+    "description": "A short vocabulary refresher for AI talks at conferences, so one unfamiliar term doesn't make you lose the thread.",
+    "url": "https://www.linkedin.com/posts/lifel_going-to-an-industry-event-soon-featuring-share-7518204951685386240-JdEN",
+    "image": "images/linkedin/2026-10-20-ai-vocabulary-in-conferences.jpg"
+  },
+  {
+    "title": "Cookie Consent Banners in Germany: Practice What You Preach",
+    "date": "2026-10-16",
+    "description": "A web analytics consultant's view on consent banners, including why requirements in the German market can be stricter than many expect.",
+    "url": "https://www.linkedin.com/posts/lifel_practice-what-you-preach-on-consent-banners-ugcPost-7516755340676202496-lNqO",
+    "image": "images/linkedin/2026-10-16-cookie-banner-opt-out-testing.jpg"
+  },
+  {
+    "title": "How to Check Which GTM Containers Are Installed on a Website",
+    "date": "2026-10-13",
+    "description": "How to quickly find out which Google Tag Manager containers run on a site, beyond checking the source code.",
+    "url": "https://www.linkedin.com/posts/lifel_how-did-you-check-so-quickly-which-gtm-containers-share-7515668107823083521-DUmX",
+    "image": ""
+  },
+  {
+    "title": "AI Search Meeting Bingo: 7 Phrases That Deserve a Follow-Up Question",
+    "date": "2026-10-09",
+    "description": "A lighthearted bingo of the phrases heard in AI visibility meetings, such as \"we need to be visible in AI\", and the questions worth asking next.",
+    "url": "https://www.linkedin.com/posts/lifel_we-need-to-be-visible-in-ai-or-7-phrases-share-7514218357047357440-EgS0",
+    "image": ""
+  },
+  {
+    "title": "PostHog Tested: Analytics, Heatmaps and Session Replay on a Small Website",
+    "date": "2026-10-06",
+    "description": "Hands-on notes from installing PostHog with an AI-assisted setup: what worked, what needs manual checking, and why privacy and consent are part of the setup.",
+    "url": "https://www.linkedin.com/posts/lifel_do-you-know-posthog-with-ai-tools-appearing-ugcPost-7513131276359454720-D3Ri",
+    "image": "images/linkedin/2026-10-06-posthog-testing.mov"
+  },
+  {
+    "title": "Naming Freelance Services: Why Consistent Service Names Matter",
+    "date": "2026-10-02",
+    "description": "What freelancing taught me about naming my own services, and why consistent naming across two clear areas of work makes them easier to understand.",
+    "url": "https://www.linkedin.com/posts/lifel_one-thing-ive-learned-about-freelancing-share-7511681559054430208-0Ujz",
+    "image": ""
+  },
   {
     "title": "Data Analytics Bingo 🎯",
     "date": "2026-09-29",

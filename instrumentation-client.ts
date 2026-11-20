@@ -26,6 +26,7 @@ if (!projectToken || !host) {
       defaults: "2026-01-30",
       capture_exceptions: true,
       capture_heatmaps: true,
+      disable_session_recording: false,
       debug: process.env.NODE_ENV === "development",
     });
   };
