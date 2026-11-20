@@ -34,13 +34,26 @@ function LinkedInCard({ item }: { item: Extract<FeedItem, { type: "linkedin" }> 
     >
       <div className="relative w-full h-[140px] border-b bg-neutral-100">
         {item.image ? (
-          <Image
-            src={item.image}
-            alt=""
-            fill
-            className="object-cover"
-            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-          />
+          /\.(mov|mp4|webm)$/i.test(item.image) ? (
+            <video
+              src={item.image}
+              muted
+              loop
+              autoPlay
+              playsInline
+              preload="metadata"
+              className="absolute inset-0 h-full w-full object-cover pointer-events-none"
+              aria-hidden
+            />
+          ) : (
+            <Image
+              src={item.image}
+              alt=""
+              fill
+              className="object-cover"
+              sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            />
+          )
         ) : (
           <div className="h-full w-full bg-gradient-to-br from-neutral-100 via-white to-neutral-100" />
         )}
